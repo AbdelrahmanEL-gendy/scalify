@@ -596,6 +596,11 @@ window.sendToZapier = function() {
   
   function forceToPanel10() {
     console.log('=== FORCING TO PANEL 10 ===');
+    
+    // Hide step indicator
+    var stepIndicator = document.querySelector('.step-indicator');
+    if (stepIndicator) stepIndicator.style.display = 'none';
+    
     var splash = document.getElementById('splash-screen');
     if (splash) splash.classList.add('hidden');
     
@@ -631,11 +636,6 @@ window.sendToZapier = function() {
       pipWindow.style.opacity = '1';
       pipWindow.style.visibility = 'visible';
     }
-    var pipImg = document.querySelector('#old-site-pip img');
-    if (pipImg && window.cachedOldSiteImage) {
-      pipImg.src = window.cachedOldSiteImage;
-      pipImg.style.opacity = '1';
-    }
     
     currentPanelNumber = 10;
     currentPercentage = 100;
@@ -647,6 +647,19 @@ window.sendToZapier = function() {
     if (progressNumber) progressNumber.textContent = '100%';
     var leadNumber = document.getElementById('lead-number');
     if (leadNumber) leadNumber.textContent = '$' + currentLeads;
+    
+    setTimeout(function() {
+      var pipImg = document.querySelector('#old-site-pip img');
+      if (pipImg && window.screenshotUrl) {
+        pipImg.src = window.screenshotUrl;
+        pipImg.style.opacity = '1';
+        console.log('PIP image set to:', window.screenshotUrl);
+      } else if (pipImg && window.cachedOldSiteImage) {
+        pipImg.src = window.cachedOldSiteImage;
+        pipImg.style.opacity = '1';
+        console.log('PIP image set from cache');
+      }
+    }, 500);
   }
   
   function showLoggedInState(member) {
