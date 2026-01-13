@@ -955,6 +955,7 @@ if (hasSavedSession) {
   var progressNumber = document.querySelector('.progress-number');
   if (progressNumber) progressNumber.textContent = '0/9';
 }
+  initPanel3Button();
   
   // INDUSTRY SELECTION
   document.querySelectorAll('.industry-card').forEach(function(card) {
