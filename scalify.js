@@ -26,6 +26,22 @@ var panelLeads = {
   1: 0, 2: 50, 3: 100, 4: 150, 5: 200, 6: 250, 7: 300, 8: 350, 9: 400, 10: 500
 };
 
+// Load cached image from localStorage on page load
+(function() {
+  var savedImage = localStorage.getItem('scalify_oldSiteImage');
+  var savedUrl = localStorage.getItem('scalify_scannedUrl');
+  
+  if (savedImage) {
+    window.cachedOldSiteImage = savedImage;
+    console.log('Loaded cached image from localStorage');
+  }
+  
+  if (savedUrl) {
+    window.scannedUrl = savedUrl;
+    console.log('Loaded scanned URL from localStorage:', savedUrl);
+  }
+})();
+
 // ==================== AUDIO FUNCTIONS ====================
 
 function initAudio() {
@@ -830,11 +846,16 @@ window.sendToZapier = function() {
         if (!e.target.closest('.user-settings')) settingsDropdown.classList.remove('active');
       });
     }
-    if (logoutBtn) {
+    
+if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
         if (settingsDropdown) settingsDropdown.classList.remove('active');
         if (confirm('Are you sure you want to log out?')) {
+          // Clear localStorage
+          localStorage.removeItem('scalify_oldSiteImage');
+          localStorage.removeItem('scalify_scannedUrl');
+          
           window.$memberstackDom.logout().then(function() {
             window.isLoggedInUser = false;
             var userIndicator = document.getElementById('user-indicator');
