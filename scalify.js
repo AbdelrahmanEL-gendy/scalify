@@ -943,10 +943,18 @@ document.addEventListener('DOMContentLoaded', function() {
     if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
   });
   
+  // Check if returning user (has saved data)
+var hasSavedSession = localStorage.getItem('scalify_oldSiteImage');
+if (hasSavedSession) {
+  var progressFill = document.querySelector('.progress-fill');
+  if (progressFill) progressFill.style.width = '100%';
+  var progressNumber = document.querySelector('.progress-number');
+  if (progressNumber) progressNumber.textContent = '9/9';
+} else {
   window.updateProgress(1, 'none');
   var progressNumber = document.querySelector('.progress-number');
   if (progressNumber) progressNumber.textContent = '0/9';
-  initPanel3Button();
+}
   
   // INDUSTRY SELECTION
   document.querySelectorAll('.industry-card').forEach(function(card) {
