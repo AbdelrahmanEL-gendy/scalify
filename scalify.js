@@ -659,13 +659,13 @@ window.sendToZapier = function() {
     }
     
     currentPanelNumber = 10;
-    currentPercentage = 100;
+    currentPercentage = 9;
     currentLeads = panelLeads[10] || 500;
     
     var progressFill = document.querySelector('.progress-fill');
     if (progressFill) progressFill.style.width = '100%';
     var progressNumber = document.querySelector('.progress-number');
-    if (progressNumber) progressNumber.textContent = '100%';
+    if (progressNumber) progressNumber.textContent = '9/9';
     var leadNumber = document.getElementById('lead-number');
     if (leadNumber) leadNumber.textContent = '$' + currentLeads;
     
@@ -852,7 +852,7 @@ window.sendToZapier = function() {
       });
     }
     
-if (logoutBtn) {
+    if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
         if (settingsDropdown) settingsDropdown.classList.remove('active');
@@ -944,8 +944,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   window.updateProgress(1, 'none');
-var progressNumber = document.querySelector('.progress-number');
-if (progressNumber) progressNumber.textContent = '0/9';
+  var progressNumber = document.querySelector('.progress-number');
+  if (progressNumber) progressNumber.textContent = '0/9';
   initPanel3Button();
   
   // INDUSTRY SELECTION
