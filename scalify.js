@@ -255,32 +255,37 @@ function loseLeads(targetLeads) {
 }
 
 function animateNumber(element, start, target) {
-  var duration = 1500;
+  var duration = 1000;
   var startTime = null;
   function step(timestamp) {
     if (!startTime) startTime = timestamp;
     var progress = Math.min((timestamp - startTime) / duration, 1);
-    element.textContent = Math.round(start + (target - start) * progress) + '%';
+    var current = Math.round(start + (target - start) * progress);
+    element.textContent = current + '/9';
     if (progress < 1) requestAnimationFrame(step);
   }
   requestAnimationFrame(step);
 }
 
 window.updateProgress = function(panelNumber, direction) {
-  var totalPanels = 7;
-  var targetPercentage = Math.round(((panelNumber - 1) / (totalPanels - 1)) * 100);
+  var totalSteps = 9;
+  var currentStep = Math.min(panelNumber - 1, totalSteps);
+  var fillPercentage = (currentStep / totalSteps) * 100;
+  
   var progressFill = document.querySelector('.progress-fill');
-  if (progressFill) progressFill.style.width = targetPercentage + '%';
+  if (progressFill) progressFill.style.width = fillPercentage + '%';
+  
   var progressNumber = document.querySelector('.progress-number');
-  if (progressNumber) animateNumber(progressNumber, currentPercentage, targetPercentage);
-  if (direction === 'forward' && targetPercentage > 0) {
+  if (progressNumber) animateNumber(progressNumber, currentPercentage, currentStep);
+  
+  if (direction === 'forward' && currentStep > 0) {
     playHealSound();
     var targetLeads = panelLeads[panelNumber] || 0;
     if (targetLeads > currentLeads) {
       setTimeout(function() { updateLeads(targetLeads); }, 500);
     }
   }
-  currentPercentage = targetPercentage;
+  currentPercentage = currentStep;
 };
 
 // ==================== ROBOT & PANELS ====================
@@ -939,6 +944,8 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   
   window.updateProgress(1, 'none');
+var progressNumber = document.querySelector('.progress-number');
+if (progressNumber) progressNumber.textContent = '0/9';
   initPanel3Button();
   
   // INDUSTRY SELECTION
