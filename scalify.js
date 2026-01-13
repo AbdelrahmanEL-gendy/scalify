@@ -665,7 +665,7 @@ window.sendToZapier = function() {
     var progressFill = document.querySelector('.progress-fill');
     if (progressFill) progressFill.style.width = '100%';
     var progressNumber = document.querySelector('.progress-number');
-    if (progressNumber) progressNumber.textContent = '9/9';
+    if (progressNumber) progressNumber.textContent = '9/9';;
     var leadNumber = document.getElementById('lead-number');
     if (leadNumber) leadNumber.textContent = '$' + currentLeads;
     
