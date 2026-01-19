@@ -276,10 +276,19 @@ window.updateProgress = function(panelNumber, direction) {
 
 // ==================== ROBOT & PANELS ====================
 
+var currentTypeInterval = null;
+
 window.showRobotMessage = function(panelId) {
   var bubble = document.querySelector('.speech-bubble');
   var text = document.querySelector('.speech-text');
   if (!bubble || !text) return;
+  
+  // Clear any existing typing interval first
+  if (currentTypeInterval) {
+    clearInterval(currentTypeInterval);
+    currentTypeInterval = null;
+  }
+  
   var message = robotMessages[panelId];
   if (message) {
     bubble.classList.remove('active');
@@ -287,11 +296,14 @@ window.showRobotMessage = function(panelId) {
       text.textContent = '';
       bubble.classList.add('active');
       var i = 0;
-      var typeInterval = setInterval(function() {
-        text.textContent += message[i];
-        if (message[i] !== ' ') playBeep();
-        i++;
-        if (i >= message.length) clearInterval(typeInterval);
+      currentTypeInterval = setInterval(function() {
+        if (i < message.length) {
+          text.textContent += message[i];
+          i++;
+        } else {
+          clearInterval(currentTypeInterval);
+          currentTypeInterval = null;
+        }
       }, 50);
     }, 300);
   }
