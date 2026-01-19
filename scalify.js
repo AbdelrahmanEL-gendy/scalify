@@ -50,20 +50,6 @@ function initAudio() {
   }
 }
 
-function playBeep() {
-  if (!audioContext) return;
-  var oscillator = audioContext.createOscillator();
-  var gainNode = audioContext.createGain();
-  oscillator.connect(gainNode);
-  gainNode.connect(audioContext.destination);
-  var frequencies = [200, 250, 300, 350, 400, 450, 500];
-  oscillator.frequency.value = frequencies[Math.floor(Math.random() * frequencies.length)];
-  oscillator.type = 'square';
-  gainNode.gain.value = 0.1;
-  oscillator.start();
-  oscillator.stop(audioContext.currentTime + 0.05);
-}
-
 function playHealSound() {
   if (!audioContext) return;
   var oscillator = audioContext.createOscillator();
@@ -73,7 +59,7 @@ function playHealSound() {
   oscillator.type = 'sine';
   oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
   oscillator.frequency.linearRampToValueAtTime(600, audioContext.currentTime + 0.3);
-  gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+  gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);  // Was 0.15, now 0.05
   gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.5);
   oscillator.start();
   oscillator.stop(audioContext.currentTime + 0.5);
@@ -84,7 +70,7 @@ function playHealSound() {
     sparkleGain.connect(audioContext.destination);
     sparkle.type = 'sine';
     sparkle.frequency.value = 800;
-    sparkleGain.gain.setValueAtTime(0.1, audioContext.currentTime);
+    sparkleGain.gain.setValueAtTime(0.03, audioContext.currentTime);  // Was 0.1, now 0.03
     sparkleGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
     sparkle.start();
     sparkle.stop(audioContext.currentTime + 0.2);
@@ -100,7 +86,7 @@ function playDamageSound() {
   oscillator.type = 'square';
   oscillator.frequency.setValueAtTime(400, audioContext.currentTime);
   oscillator.frequency.linearRampToValueAtTime(100, audioContext.currentTime + 0.2);
-  gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+  gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);  // Was 0.15, now 0.05
   gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3);
   oscillator.start();
   oscillator.stop(audioContext.currentTime + 0.3);
@@ -117,7 +103,7 @@ function playCashSound() {
   oscillator.frequency.setValueAtTime(1200, audioContext.currentTime + 0.05);
   oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
   oscillator.frequency.setValueAtTime(1400, audioContext.currentTime + 0.15);
-  gainNode.gain.setValueAtTime(0.15, audioContext.currentTime);
+  gainNode.gain.setValueAtTime(0.05, audioContext.currentTime);  // Was 0.15, now 0.05
   gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.4);
   oscillator.start();
   oscillator.stop(audioContext.currentTime + 0.4);
@@ -128,7 +114,7 @@ function playCashSound() {
     chingGain.connect(audioContext.destination);
     ching.type = 'sine';
     ching.frequency.value = 2000;
-    chingGain.gain.setValueAtTime(0.1, audioContext.currentTime);
+    chingGain.gain.setValueAtTime(0.03, audioContext.currentTime);  // Was 0.1, now 0.03
     chingGain.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
     ching.start();
     ching.stop(audioContext.currentTime + 0.2);
@@ -144,7 +130,7 @@ function playBuildSound() {
   oscillator.type = 'sine';
   oscillator.frequency.setValueAtTime(500, audioContext.currentTime);
   oscillator.frequency.linearRampToValueAtTime(700, audioContext.currentTime + 0.1);
-  gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
+  gainNode.gain.setValueAtTime(0.03, audioContext.currentTime);  // Was 0.1, now 0.03
   gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2);
   oscillator.start();
   oscillator.stop(audioContext.currentTime + 0.2);
@@ -943,18 +929,14 @@ document.addEventListener('DOMContentLoaded', function() {
     if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
   });
   
-  // Check if returning user (has saved data)
-var hasSavedSession = localStorage.getItem('scalify_oldSiteImage');
-if (hasSavedSession) {
-  var progressFill = document.querySelector('.progress-fill');
-  if (progressFill) progressFill.style.width = '100%';
-  var progressNumber = document.querySelector('.progress-number');
-  if (progressNumber) progressNumber.textContent = '9/9';
-} else {
-  window.updateProgress(1, 'none');
-  var progressNumber = document.querySelector('.progress-number');
-  if (progressNumber) progressNumber.textContent = '0/9';
-}
+ // Start at 0/9 - Memberstack auth will update for logged-in returning users
+var progressFill = document.querySelector('.progress-fill');
+if (progressFill) progressFill.style.width = '0%';
+var progressNumber = document.querySelector('.progress-number');
+if (progressNumber) progressNumber.textContent = '0/9';
+var leadNumber = document.getElementById('lead-number');
+if (leadNumber) leadNumber.textContent = '$0';
+  
   initPanel3Button();
   
   // INDUSTRY SELECTION
