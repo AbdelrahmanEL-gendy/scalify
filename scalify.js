@@ -13,7 +13,8 @@ var audioContext;
 
 var robotMessages = {
   'panel-1': "Welcome to Scalify.ai",
-  'panel-2': "Scan your current site now",
+  'panel-1b': "What's your business called?",
+  'panel-2': "Now scan your current site",
   'panel-3': "Let's improve your site today",
   'panel-4': "Pick your industry!",
   'panel-5': "Choose your style!",
@@ -23,7 +24,17 @@ var robotMessages = {
 };
 
 var panelLeads = {
-  1: 0, 2: 50, 3: 100, 4: 150, 5: 200, 6: 250, 7: 300, 8: 350, 9: 400, 10: 500
+  1: 0, 
+  '1b': 25,  // NEW
+  2: 50, 
+  3: 100, 
+  4: 150, 
+  5: 200, 
+  6: 250, 
+  7: 300, 
+  8: 350, 
+  9: 400, 
+  10: 500
 };
 
 // Load cached image from localStorage on page load
