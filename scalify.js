@@ -387,11 +387,18 @@ function updateIndustryPreview() {
   var cta = document.getElementById('preview-cta');
   var navCta = document.getElementById('preview-nav-cta');
   var image = document.getElementById('preview-image');
+  var img5k = document.getElementById('template-5k');
+  var img10k = document.getElementById('template-10k');
+  var img50k = document.getElementById('template-50k');
+  
   if (headline && industry.headline) headline.innerHTML = industry.headline;
   if (description && industry.description) description.innerHTML = industry.description;
   if (cta && industry.cta) cta.innerHTML = industry.cta;
   if (navCta && industry.cta) navCta.innerHTML = industry.cta;
   if (image && industry.image) image.src = industry.image;
+  if (img5k && industry.template5k) img5k.src = industry.template5k;
+  if (img10k && industry.template10k) img10k.src = industry.template10k;
+  if (img50k && industry.template50k) img50k.src = industry.template50k;
 }
 
 function updateStylePreview() {
@@ -963,23 +970,26 @@ if (leadNumber) leadNumber.textContent = '$0';
   initPanel3Button();
   
   // INDUSTRY SELECTION
-  document.querySelectorAll('.industry-card').forEach(function(card) {
-    card.addEventListener('click', function() {
-      document.querySelectorAll('.industry-card').forEach(function(c) { c.classList.remove('selected'); });
-      this.classList.add('selected');
-      window.siteConfig.industry = {
-        slug: this.getAttribute('data-slug'),
-        headline: this.getAttribute('data-headline'),
-        description: this.getAttribute('data-description'),
-        cta: this.getAttribute('data-cta'),
-        image: this.getAttribute('data-image')
-      };
-      updateIndustryPreview();
-      var nextBtn = document.querySelector('#right-panel-4 .next-btn');
-      if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
-      playBuildSound();
-    });
+document.querySelectorAll('.industry-card').forEach(function(card) {
+  card.addEventListener('click', function() {
+    document.querySelectorAll('.industry-card').forEach(function(c) { c.classList.remove('selected'); });
+    this.classList.add('selected');
+    window.siteConfig.industry = {
+      slug: this.getAttribute('data-slug'),
+      headline: this.getAttribute('data-headline'),
+      description: this.getAttribute('data-description'),
+      cta: this.getAttribute('data-cta'),
+      image: this.getAttribute('data-image'),
+      template5k: this.getAttribute('data-template-5k'),
+      template10k: this.getAttribute('data-template-10k'),
+      template50k: this.getAttribute('data-template-50k')
+    };
+    updateIndustryPreview();
+    var nextBtn = document.querySelector('#right-panel-4 .next-btn');
+    if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
+    playBuildSound();
   });
+});
   
   // STYLE SELECTION
   document.querySelectorAll('.style-card').forEach(function(card) {
