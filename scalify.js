@@ -969,24 +969,37 @@ if (leadNumber) leadNumber.textContent = '$0';
   
   initPanel3Button();
   
-// INDUSTRY SELECTION - Fully scalable with CMS
+// INDUSTRY SELECTION - DEBUG VERSION
 (function() {
   window.selectedIndustrySlug = null;
   
   function syncIndustrySelection() {
-    document.querySelectorAll('.industry-card').forEach(function(card) {
-      if (window.selectedIndustrySlug && card.getAttribute('data-slug') === window.selectedIndustrySlug) {
+    console.log('[Industry Sync] Running sync, selected slug:', window.selectedIndustrySlug);
+    var cards = document.querySelectorAll('.industry-card');
+    console.log('[Industry Sync] Found', cards.length, 'cards');
+    
+    cards.forEach(function(card) {
+      var cardSlug = card.getAttribute('data-slug');
+      var shouldBeSelected = window.selectedIndustrySlug && cardSlug === window.selectedIndustrySlug;
+      
+      if (shouldBeSelected) {
         card.classList.add('selected');
+        console.log('[Industry Sync] ✓ Selected:', cardSlug);
       } else {
         card.classList.remove('selected');
       }
     });
+    
+    // Check how many are selected after sync
+    var selectedCount = document.querySelectorAll('.industry-card.selected').length;
+    console.log('[Industry Sync] Cards with .selected class:', selectedCount);
   }
   
-  // EVENT DELEGATION - works for any card, even added later
   document.addEventListener('click', function(e) {
     var card = e.target.closest('.industry-card');
     if (!card) return;
+    
+    console.log('[Industry Click] Clicked card:', card.getAttribute('data-slug'));
     
     window.selectedIndustrySlug = card.getAttribute('data-slug');
     syncIndustrySelection();
@@ -1011,20 +1024,33 @@ if (leadNumber) leadNumber.textContent = '$0';
   // Sync on search/filter changes
   document.addEventListener('input', function(e) {
     if (e.target.matches('[data-jet-filter] input, .jetboost-search input, input[type="search"]')) {
+      console.log('[Industry Search] Search input changed');
       setTimeout(syncIndustrySelection, 100);
     }
   });
   
-  // Sync on any DOM changes in industry container
-  var container = document.querySelector('.industry-grid, [data-jet-filter-list], .industry-cards-wrapper');
+  // Find the container - let's log what we find
+  var container = document.querySelector('.industry-grid') || 
+                  document.querySelector('[data-jet-filter-list]') || 
+                  document.querySelector('.industry-cards-wrapper');
+  
+  console.log('[Industry Init] Container found:', container);
+  
   if (container) {
-    new MutationObserver(syncIndustrySelection).observe(container, {
+    new MutationObserver(function(mutations) {
+      console.log('[Industry MutationObserver] DOM changed, syncing...');
+      syncIndustrySelection();
+    }).observe(container, {
       childList: true,
       subtree: true,
       attributes: true,
       attributeFilter: ['style', 'class']
     });
+  } else {
+    console.warn('[Industry Init] ⚠️ No container found for MutationObserver');
   }
+  
+  console.log('[Industry Init] Setup complete');
 })();
   
   // STYLE SELECTION
