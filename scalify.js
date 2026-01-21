@@ -969,10 +969,15 @@ if (leadNumber) leadNumber.textContent = '$0';
   
   initPanel3Button();
   
-  // INDUSTRY SELECTION
+ // INDUSTRY SELECTION
 document.querySelectorAll('.industry-card').forEach(function(card) {
   card.addEventListener('click', function() {
-    document.querySelectorAll('.industry-card').forEach(function(c) { c.classList.remove('selected'); });
+    // Force clear ALL industry cards regardless of visibility
+    var allCards = document.getElementsByClassName('industry-card');
+    for (var i = 0; i < allCards.length; i++) {
+      allCards[i].classList.remove('selected');
+    }
+    
     this.classList.add('selected');
     window.siteConfig.industry = {
       slug: this.getAttribute('data-slug'),
