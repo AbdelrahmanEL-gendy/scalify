@@ -969,32 +969,63 @@ if (leadNumber) leadNumber.textContent = '$0';
   
   initPanel3Button();
   
- // INDUSTRY SELECTION
-document.querySelectorAll('.industry-card').forEach(function(card) {
-  card.addEventListener('click', function() {
-    // Force clear ALL industry cards regardless of visibility
-    var allCards = document.getElementsByClassName('industry-card');
-    for (var i = 0; i < allCards.length; i++) {
-      allCards[i].classList.remove('selected');
-    }
+// INDUSTRY SELECTION - Fully scalable with CMS
+(function() {
+  window.selectedIndustrySlug = null;
+  
+  function syncIndustrySelection() {
+    document.querySelectorAll('.industry-card').forEach(function(card) {
+      if (window.selectedIndustrySlug && card.getAttribute('data-slug') === window.selectedIndustrySlug) {
+        card.classList.add('selected');
+      } else {
+        card.classList.remove('selected');
+      }
+    });
+  }
+  
+  // EVENT DELEGATION - works for any card, even added later
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('.industry-card');
+    if (!card) return;
     
-    this.classList.add('selected');
+    window.selectedIndustrySlug = card.getAttribute('data-slug');
+    syncIndustrySelection();
+    
     window.siteConfig.industry = {
-      slug: this.getAttribute('data-slug'),
-      headline: this.getAttribute('data-headline'),
-      description: this.getAttribute('data-description'),
-      cta: this.getAttribute('data-cta'),
-      image: this.getAttribute('data-image'),
-      template5k: this.getAttribute('data-template-5k'),
-      template10k: this.getAttribute('data-template-10k'),
-      template50k: this.getAttribute('data-template-50k')
+      slug: card.getAttribute('data-slug'),
+      headline: card.getAttribute('data-headline'),
+      description: card.getAttribute('data-description'),
+      cta: card.getAttribute('data-cta'),
+      image: card.getAttribute('data-image'),
+      template5k: card.getAttribute('data-template-5k'),
+      template10k: card.getAttribute('data-template-10k'),
+      template50k: card.getAttribute('data-template-50k')
     };
+    
     updateIndustryPreview();
     var nextBtn = document.querySelector('#right-panel-4 .next-btn');
     if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
-    playBuildSound();
+    if (typeof playBuildSound === 'function') playBuildSound();
   });
-});
+  
+  // Sync on search/filter changes
+  document.addEventListener('input', function(e) {
+    if (e.target.matches('[data-jet-filter] input, .jetboost-search input, input[type="search"]')) {
+      setTimeout(syncIndustrySelection, 100);
+    }
+  });
+  
+  // Sync on any DOM changes in industry container
+  var container = document.querySelector('.industry-grid, [data-jet-filter-list], .industry-cards-wrapper');
+  if (container) {
+    new MutationObserver(syncIndustrySelection).observe(container, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['style', 'class']
+    });
+  }
+})();
   
   // STYLE SELECTION
   document.querySelectorAll('.style-card').forEach(function(card) {
