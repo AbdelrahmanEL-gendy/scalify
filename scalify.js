@@ -939,9 +939,12 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
- // AUTO-START (no splash screen)
-  initAudio();
-  setTimeout(function() { window.showRobotMessage('panel-1'); }, 500);
+// AUTO-START (no splash screen)
+var splash = document.getElementById('splash-screen');
+if (splash) splash.style.display = 'none';
+
+initAudio();
+setTimeout(function() { window.showRobotMessage('panel-1'); }, 500);
   
   window.addEventListener('keydown', function(e) {
     var tagName = document.activeElement.tagName.toLowerCase();
