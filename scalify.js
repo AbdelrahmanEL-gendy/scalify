@@ -1,11 +1,6 @@
 // ==================== SCALIFY.JS ====================
 // Host on GitHub, serve via jsDelivr CDN
 
-// Pause GSAP immediately
-if (typeof gsap !== 'undefined') {
-  gsap.globalTimeline.pause();
-}
-
 var currentPercentage = 0;
 var currentPanelNumber = 1;
 var currentLeads = 0;
@@ -324,14 +319,18 @@ function scaleRobot(panelNumber) {
   var splineContainer = document.querySelector('.spline-container');
   var speechBubble = document.querySelector('.speech-bubble');
   var rightContent = document.querySelector('.right-content');
+  var leadCounter = document.getElementById('lead-counter');
+  
   if (panelNumber >= 4) {
     if (splineContainer) splineContainer.classList.add('hidden');
     if (speechBubble) speechBubble.classList.add('hidden');
     if (rightContent) rightContent.classList.add('expanded');
+    if (leadCounter) leadCounter.classList.add('visible');
   } else {
     if (splineContainer) splineContainer.classList.remove('hidden');
     if (speechBubble) speechBubble.classList.remove('hidden');
     if (rightContent) rightContent.classList.remove('expanded');
+    if (leadCounter) leadCounter.classList.remove('visible');
   }
 }
 
@@ -892,8 +891,6 @@ window.sendToZapier = function() {
 // ==================== DOM CONTENT LOADED ====================
 
 document.addEventListener('DOMContentLoaded', function() {
-  if (typeof gsap !== 'undefined') gsap.globalTimeline.pause();
-  
   window.siteConfig = { industry: null, style: null, colors: null };
   
   // BACK BUTTONS
@@ -942,16 +939,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // SPLASH SCREEN
-  var splash = document.getElementById('splash-screen');
-  if (splash) {
-    splash.addEventListener('click', function() {
-      if (typeof gsap !== 'undefined') gsap.globalTimeline.resume();
-      initAudio();
-      splash.classList.add('hidden');
-      setTimeout(function() { window.showRobotMessage('panel-1'); }, 500);
-    });
-  }
+ // AUTO-START (no splash screen)
+  initAudio();
+  setTimeout(function() { window.showRobotMessage('panel-1'); }, 500);
   
   window.addEventListener('keydown', function(e) {
     var tagName = document.activeElement.tagName.toLowerCase();
