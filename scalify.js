@@ -892,6 +892,33 @@ window.sendToZapier = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   window.siteConfig = { industry: null, style: null, colors: null };
+
+ // URL UPDATER - handles both tabs
+function updateSiteUrls() {
+  var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
+  var displayUrl;
+  
+  if (scannedUrl && scannedUrl !== 'skipped') {
+    // User entered a URL - show their actual site
+    displayUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  } else {
+    // User skipped - show businessname.com
+    var businessName = (window.siteConfig && window.siteConfig.businessName) || 
+                       localStorage.getItem('scalify_businessName') || 
+                       'your-new-website';
+    displayUrl = businessName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+  }
+  
+  // Update both tabs
+  var newSiteUrl = document.getElementById('new-site-url');
+  if (newSiteUrl) newSiteUrl.textContent = displayUrl;
+  
+  var oldSiteUrl = document.getElementById('old-site-url');
+  if (oldSiteUrl) oldSiteUrl.textContent = displayUrl;
+}
+
+window.updateSiteUrls = updateSiteUrls;
+updateSiteUrls();
   
   // BACK BUTTONS
   document.querySelectorAll('.back-btn').forEach(function(btn) {
