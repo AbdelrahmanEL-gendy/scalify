@@ -899,14 +899,15 @@ function updateSiteUrls() {
   var displayUrl;
   
   if (scannedUrl && scannedUrl !== 'skipped') {
-    // User entered a URL - show their actual site
-    displayUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+    // User entered a URL - show their actual site with https://www.
+    var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+    displayUrl = 'https://www.' + cleanUrl;
   } else {
-    // User skipped - show businessname.com
+    // User skipped - show businessname.com with https://www.
     var businessName = (window.siteConfig && window.siteConfig.businessName) || 
                        localStorage.getItem('scalify_businessName') || 
                        'your-new-website';
-    displayUrl = businessName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+    displayUrl = 'https://www.' + businessName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
   }
   
   // Update both tabs
