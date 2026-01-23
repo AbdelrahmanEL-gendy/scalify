@@ -1304,4 +1304,8 @@ function initConditionalDomainUpsell() {
   setInterval(check, 300);
 }
 
+initUpsellClicks();
+initConditionalDomainUpsell();
+setInterval(syncUpsellStates, 300);
+
   });
