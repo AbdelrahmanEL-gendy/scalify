@@ -1111,7 +1111,7 @@ if (leadNumber) leadNumber.textContent = '$0';
     });
   });
   
-  // PANEL NAVIGATION
+// PANEL NAVIGATION
   document.querySelectorAll('[data-go-to]').forEach(function(button) {
     button.addEventListener('click', function() {
       if (this.classList.contains('back-btn')) return;
@@ -1168,4 +1168,95 @@ if (leadNumber) leadNumber.textContent = '$0';
       playBuildSound();
     });
   });
+
+  // =========================
+  // DOMAIN & LOGO UPSELLS
+  // =========================
+
+  function initUpsellClicks() {
+    
+    // ----- DOMAIN UPSELL (URL Click) -----
+    var newSiteUrl = document.getElementById('new-site-url');
+    if (newSiteUrl) {
+      newSiteUrl.addEventListener('click', function() {
+        var domainUpsell = document.getElementById('upsell-domain');
+        
+        if (newSiteUrl.classList.contains('added')) {
+          if (domainUpsell && domainUpsell.classList.contains('active')) {
+            domainUpsell.click();
+          }
+          newSiteUrl.classList.remove('added');
+        } else {
+          if (domainUpsell && !domainUpsell.classList.contains('active')) {
+            domainUpsell.click();
+          }
+          newSiteUrl.classList.add('added');
+        }
+        
+        if (typeof playBuildSound === 'function') playBuildSound();
+      });
+    }
+    
+    // ----- LOGO UPSELL (Floating Button) -----
+    var floatingLogo = document.getElementById('floating-logo-upsell');
+    if (floatingLogo) {
+      floatingLogo.addEventListener('click', function() {
+        var brandUpsell = document.getElementById('upsell-brand');
+        
+        if (floatingLogo.classList.contains('added')) {
+          if (brandUpsell && brandUpsell.classList.contains('active')) {
+            brandUpsell.click();
+          }
+          floatingLogo.classList.remove('added');
+          floatingLogo.innerHTML = '<span class="logo-icon">✦</span> Add Logo';
+        } else {
+          if (brandUpsell && !brandUpsell.classList.contains('active')) {
+            brandUpsell.click();
+          }
+          floatingLogo.classList.add('added');
+          floatingLogo.innerHTML = '<span class="logo-icon">✓</span> Logo Added';
+        }
+        
+        if (typeof playBuildSound === 'function') playBuildSound();
+      });
+    }
+  }
+
+  // =========================
+  // SYNC CART ↔ PREVIEW BUTTONS
+  // =========================
+
+  function syncUpsellStates() {
+    var domainUpsell = document.getElementById('upsell-domain');
+    var brandUpsell = document.getElementById('upsell-brand');
+    var newSiteUrl = document.getElementById('new-site-url');
+    var floatingLogo = document.getElementById('floating-logo-upsell');
+    
+    // Sync domain
+    if (domainUpsell && newSiteUrl) {
+      if (domainUpsell.classList.contains('active') && !newSiteUrl.classList.contains('added')) {
+        newSiteUrl.classList.add('added');
+      } else if (!domainUpsell.classList.contains('active') && newSiteUrl.classList.contains('added')) {
+        newSiteUrl.classList.remove('added');
+      }
+    }
+    
+    // Sync logo
+    if (brandUpsell && floatingLogo) {
+      if (brandUpsell.classList.contains('active') && !floatingLogo.classList.contains('added')) {
+        floatingLogo.classList.add('added');
+        floatingLogo.innerHTML = '<span class="logo-icon">✓</span> Logo Added';
+      } else if (!brandUpsell.classList.contains('active') && floatingLogo.classList.contains('added')) {
+        floatingLogo.classList.remove('added');
+        floatingLogo.innerHTML = '<span class="logo-icon">✦</span> Add Logo';
+      }
+    }
+  }
+
+  // Initialize upsells
+  initUpsellClicks();
+
+  // Run sync every 300ms
+  setInterval(syncUpsellStates, 300);
+
 });
