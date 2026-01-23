@@ -1198,24 +1198,18 @@ if (leadNumber) leadNumber.textContent = '$0';
     }
     
     // ----- LOGO UPSELL -----
-    var floatingLogo = document.getElementById('floating-logo-upsell');
-    var logoBtnText = document.getElementById('logo-btn-text');
-    var logoIcon = document.getElementById('logo-icon');
+    var logoAnchor = document.getElementById('logo-upsell-anchor');
     
-    if (floatingLogo) {
-      floatingLogo.addEventListener('click', function() {
+    if (logoAnchor) {
+      logoAnchor.addEventListener('click', function() {
         var brandUpsell = document.getElementById('upsell-brand');
         
-        if (floatingLogo.classList.contains('added')) {
+        if (logoAnchor.classList.contains('added')) {
           if (brandUpsell && brandUpsell.classList.contains('active')) brandUpsell.click();
-          floatingLogo.classList.remove('added');
-          if (logoBtnText) logoBtnText.textContent = 'Your Logo Here';
-          if (logoIcon) logoIcon.textContent = '+';
+          logoAnchor.classList.remove('added');
         } else {
           if (brandUpsell && !brandUpsell.classList.contains('active')) brandUpsell.click();
-          floatingLogo.classList.add('added');
-          if (logoBtnText) logoBtnText.textContent = 'Brand Kit Added ✓';
-          if (logoIcon) logoIcon.textContent = '';
+          logoAnchor.classList.add('added');
         }
         
         if (typeof playBuildSound === 'function') playBuildSound();
@@ -1231,9 +1225,7 @@ if (leadNumber) leadNumber.textContent = '$0';
     var domainUpsell = document.getElementById('upsell-domain');
     var brandUpsell = document.getElementById('upsell-brand');
     var newSiteUrl = document.getElementById('new-site-url');
-    var floatingLogo = document.getElementById('floating-logo-upsell');
-    var logoBtnText = document.getElementById('logo-btn-text');
-    var logoIcon = document.getElementById('logo-icon');
+    var logoAnchor = document.getElementById('logo-upsell-anchor');
     
     if (domainUpsell && newSiteUrl && !newSiteUrl.classList.contains('upsell-disabled')) {
       if (domainUpsell.classList.contains('active') && !newSiteUrl.classList.contains('added')) {
@@ -1243,15 +1235,11 @@ if (leadNumber) leadNumber.textContent = '$0';
       }
     }
     
-    if (brandUpsell && floatingLogo) {
-      if (brandUpsell.classList.contains('active') && !floatingLogo.classList.contains('added')) {
-        floatingLogo.classList.add('added');
-        if (logoBtnText) logoBtnText.textContent = 'Brand Kit Added ✓';
-        if (logoIcon) logoIcon.textContent = '';
-      } else if (!brandUpsell.classList.contains('active') && floatingLogo.classList.contains('added')) {
-        floatingLogo.classList.remove('added');
-        if (logoBtnText) logoBtnText.textContent = 'Your Logo Here';
-        if (logoIcon) logoIcon.textContent = '+';
+    if (brandUpsell && logoAnchor) {
+      if (brandUpsell.classList.contains('active') && !logoAnchor.classList.contains('added')) {
+        logoAnchor.classList.add('added');
+      } else if (!brandUpsell.classList.contains('active') && logoAnchor.classList.contains('added')) {
+        logoAnchor.classList.remove('added');
       }
     }
   }
@@ -1277,84 +1265,9 @@ if (leadNumber) leadNumber.textContent = '$0';
   }
 
   // =========================
-  // TOOLTIPS - SHOW ONCE ON PANEL 4
-  // =========================
-
-  function initUpsellTooltips() {
-    var logoTooltip = document.getElementById('logo-tooltip');
-    var domainTooltip = document.getElementById('domain-tooltip');
-    var newSiteUrl = document.getElementById('new-site-url');
-    
-    var hasShownLogo = false;
-    var hasShownDomain = false;
-    var hasReachedPanel4 = false;
-    
-    function positionDomainTooltip() {
-      if (!domainTooltip || !newSiteUrl) return;
-      
-      var rect = newSiteUrl.getBoundingClientRect();
-      domainTooltip.style.left = (rect.left + rect.width / 2 - 100) + 'px';
-      domainTooltip.style.top = (rect.bottom + 10) + 'px';
-    }
-    
-    function getCurrentPanel() {
-      var activePanel = document.querySelector('.content-panel.active');
-      if (activePanel && activePanel.id) {
-        var match = activePanel.id.match(/panel-(\d+)/);
-        if (match) return parseInt(match[1]);
-      }
-      return 0;
-    }
-    
-    function checkPanel() {
-      var panel = getCurrentPanel();
-      
-      if (panel >= 4 && !hasReachedPanel4) {
-        hasReachedPanel4 = true;
-        
-        // Show logo tooltip after 1.5s
-        if (logoTooltip && !hasShownLogo) {
-          hasShownLogo = true;
-          setTimeout(function() {
-            logoTooltip.classList.add('visible');
-            
-            // Hide after 4s
-            setTimeout(function() {
-              logoTooltip.classList.remove('visible');
-              
-              // Show domain tooltip if user skipped
-              if ((window.userSkippedUrl || window.hasNoSite) && domainTooltip && !hasShownDomain) {
-                hasShownDomain = true;
-                setTimeout(function() {
-                  positionDomainTooltip();
-                  domainTooltip.classList.add('visible');
-                  setTimeout(function() {
-                    domainTooltip.classList.remove('visible');
-                  }, 4000);
-                }, 500);
-              }
-            }, 4000);
-          }, 1500);
-        }
-      }
-      
-      if (panel < 4) {
-        hasReachedPanel4 = false;
-        hasShownLogo = false;
-        hasShownDomain = false;
-      }
-    }
-    
-    setInterval(checkPanel, 500);
-  }
-
-  // =========================
   // INIT
   // =========================
 
   initUpsellClicks();
   initConditionalDomainUpsell();
-  initUpsellTooltips();
   setInterval(syncUpsellStates, 300);
-
-});
