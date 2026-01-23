@@ -1167,9 +1167,7 @@ if (leadNumber) leadNumber.textContent = '$0';
       currentPanelNumber = targetPanelNumber;
       playBuildSound();
     });
-  });
-
- // =========================
+  });// =========================
   // DOMAIN & LOGO UPSELLS
   // =========================
 
@@ -1204,6 +1202,7 @@ if (leadNumber) leadNumber.textContent = '$0';
     // ----- LOGO UPSELL (Button) -----
     var floatingLogo = document.getElementById('floating-logo-upsell');
     var logoBtnText = document.getElementById('logo-btn-text');
+    var logoIcon = document.getElementById('logo-icon');
     
     if (floatingLogo) {
       floatingLogo.addEventListener('click', function() {
@@ -1214,13 +1213,15 @@ if (leadNumber) leadNumber.textContent = '$0';
             brandUpsell.click();
           }
           floatingLogo.classList.remove('added');
-          if (logoBtnText) logoBtnText.textContent = 'Add Logo';
+          if (logoBtnText) logoBtnText.textContent = 'Your Logo Here';
+          if (logoIcon) logoIcon.textContent = '✦';
         } else {
           if (brandUpsell && !brandUpsell.classList.contains('active')) {
             brandUpsell.click();
           }
           floatingLogo.classList.add('added');
-          if (logoBtnText) logoBtnText.textContent = 'Logo Added ✓';
+          if (logoBtnText) logoBtnText.textContent = 'Logo Added';
+          if (logoIcon) logoIcon.textContent = '✓';
         }
         
         if (typeof playBuildSound === 'function') playBuildSound();
@@ -1238,6 +1239,7 @@ if (leadNumber) leadNumber.textContent = '$0';
     var newSiteUrl = document.getElementById('new-site-url');
     var floatingLogo = document.getElementById('floating-logo-upsell');
     var logoBtnText = document.getElementById('logo-btn-text');
+    var logoIcon = document.getElementById('logo-icon');
     
     if (domainUpsell && newSiteUrl && !newSiteUrl.classList.contains('upsell-disabled')) {
       if (domainUpsell.classList.contains('active') && !newSiteUrl.classList.contains('added')) {
@@ -1250,10 +1252,12 @@ if (leadNumber) leadNumber.textContent = '$0';
     if (brandUpsell && floatingLogo) {
       if (brandUpsell.classList.contains('active') && !floatingLogo.classList.contains('added')) {
         floatingLogo.classList.add('added');
-        if (logoBtnText) logoBtnText.textContent = 'Logo Added ✓';
+        if (logoBtnText) logoBtnText.textContent = 'Logo Added';
+        if (logoIcon) logoIcon.textContent = '✓';
       } else if (!brandUpsell.classList.contains('active') && floatingLogo.classList.contains('added')) {
         floatingLogo.classList.remove('added');
-        if (logoBtnText) logoBtnText.textContent = 'Add Logo';
+        if (logoBtnText) logoBtnText.textContent = 'Your Logo Here';
+        if (logoIcon) logoIcon.textContent = '✦';
       }
     }
   }
@@ -1284,8 +1288,11 @@ if (leadNumber) leadNumber.textContent = '$0';
 
   function initUpsellTooltips() {
     var tooltip = document.getElementById('upsell-tooltip');
-    var tooltipText = document.getElementById('tooltip-text');
-    if (!tooltip) return;
+    var tooltipTextEl = document.getElementById('tooltip-text');
+    if (!tooltip) {
+      console.log('Tooltip element not found');
+      return;
+    }
     
     var newSiteUrl = document.getElementById('new-site-url');
     var floatingLogo = document.getElementById('floating-logo-upsell');
@@ -1296,51 +1303,62 @@ if (leadNumber) leadNumber.textContent = '$0';
       
       var rect = targetEl.getBoundingClientRect();
       
-      if (tooltipText) tooltipText.textContent = message;
+      if (tooltipTextEl) tooltipTextEl.textContent = message;
       
       tooltip.style.left = rect.left + 'px';
-      tooltip.style.top = (rect.bottom + 10) + 'px';
+      tooltip.style.top = (rect.bottom + 12) + 'px';
       tooltip.classList.add('visible');
+      
+      console.log('Showing tooltip:', message);
     }
     
     function hideTooltip() {
       tooltip.classList.remove('visible');
     }
     
-    function checkLogoTooltip() {
-      if (tooltipShown.logo) return;
-      if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
-      if (!floatingLogo) return;
+    function checkTooltips() {
+      // Get current panel - check multiple ways
+      var panel = 0;
       
-      setTimeout(function() {
-        if (tooltipShown.logo) return;
-        tooltipShown.logo = true;
-        showTooltip(floatingLogo, 'Click to add custom logo!');
-        setTimeout(hideTooltip, 4000);
-      }, 1500);
-    }
-    
-    function checkUrlTooltip() {
-      if (tooltipShown.url) return;
-      if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
-      if (!newSiteUrl) return;
-      if (!window.userSkippedUrl && !window.hasNoSite) return;
-      
-      tooltipShown.url = true;
-      showTooltip(newSiteUrl, 'Click to add domain setup!');
-      setTimeout(function() {
-        hideTooltip();
-        checkLogoTooltip();
-      }, 4000);
-    }
-    
-    setInterval(function() {
-      if (window.userSkippedUrl || window.hasNoSite) {
-        checkUrlTooltip();
+      if (typeof window.currentPanelNumber !== 'undefined') {
+        panel = window.currentPanelNumber;
+      } else if (typeof currentPanelNumber !== 'undefined') {
+        panel = currentPanelNumber;
       } else {
-        checkLogoTooltip();
+        // Fallback: check active panels
+        for (var i = 1; i <= 10; i++) {
+          var p = document.getElementById('panel-' + i);
+          if (p && p.classList.contains('active')) {
+            panel = i;
+            break;
+          }
+        }
       }
-    }, 500);
+      
+      if (panel < 4) return;
+      
+      // Show logo tooltip first (always)
+      if (!tooltipShown.logo && floatingLogo) {
+        tooltipShown.logo = true;
+        setTimeout(function() {
+          showTooltip(floatingLogo, 'Click to add custom logo!');
+          setTimeout(function() {
+            hideTooltip();
+            // Then show domain tooltip if skipped
+            if ((window.userSkippedUrl || window.hasNoSite) && !tooltipShown.url && newSiteUrl) {
+              tooltipShown.url = true;
+              setTimeout(function() {
+                showTooltip(newSiteUrl, 'Need a domain? Click here!');
+                setTimeout(hideTooltip, 4000);
+              }, 500);
+            }
+          }, 4000);
+        }, 1500);
+      }
+    }
+    
+    // Check every 500ms
+    setInterval(checkTooltips, 500);
   }
 
   // =========================
