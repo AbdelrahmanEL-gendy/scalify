@@ -1282,17 +1282,14 @@ if (leadNumber) leadNumber.textContent = '$0';
     setInterval(checkDomainUpsellVisibility, 300);
   }
 
-  // =========================
+ // =========================
   // UPSELL TOOLTIPS
   // =========================
 
   function initUpsellTooltips() {
     var tooltip = document.getElementById('upsell-tooltip');
     var tooltipTextEl = document.getElementById('tooltip-text');
-    if (!tooltip) {
-      console.log('Tooltip element not found');
-      return;
-    }
+    if (!tooltip) return;
     
     var newSiteUrl = document.getElementById('new-site-url');
     var floatingLogo = document.getElementById('floating-logo-upsell');
@@ -1308,36 +1305,28 @@ if (leadNumber) leadNumber.textContent = '$0';
       tooltip.style.left = rect.left + 'px';
       tooltip.style.top = (rect.bottom + 12) + 'px';
       tooltip.classList.add('visible');
-      
-      console.log('Showing tooltip:', message);
     }
     
     function hideTooltip() {
       tooltip.classList.remove('visible');
     }
     
-    function checkTooltips() {
-      // Get current panel - check multiple ways
-      var panel = 0;
-      
-      if (typeof window.currentPanelNumber !== 'undefined') {
-        panel = window.currentPanelNumber;
-      } else if (typeof currentPanelNumber !== 'undefined') {
-        panel = currentPanelNumber;
-      } else {
-        // Fallback: check active panels
-        for (var i = 1; i <= 10; i++) {
-          var p = document.getElementById('panel-' + i);
-          if (p && p.classList.contains('active')) {
-            panel = i;
-            break;
-          }
-        }
+    function getCurrentPanel() {
+      // Check for active panel by looking at DOM
+      var activePanel = document.querySelector('.content-panel.active');
+      if (activePanel && activePanel.id) {
+        var match = activePanel.id.match(/panel-(\d+)/);
+        if (match) return parseInt(match[1]);
       }
+      return 0;
+    }
+    
+    function checkTooltips() {
+      var panel = getCurrentPanel();
       
       if (panel < 4) return;
       
-      // Show logo tooltip first (always)
+      // Show logo tooltip first
       if (!tooltipShown.logo && floatingLogo) {
         tooltipShown.logo = true;
         setTimeout(function() {
@@ -1357,7 +1346,6 @@ if (leadNumber) leadNumber.textContent = '$0';
       }
     }
     
-    // Check every 500ms
     setInterval(checkTooltips, 500);
   }
 
