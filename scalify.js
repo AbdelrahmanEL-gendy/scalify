@@ -1170,106 +1170,138 @@ if (leadNumber) leadNumber.textContent = '$0';
   });
 
   // =========================
-  // DOMAIN & LOGO UPSELLS
-  // =========================
+// DOMAIN & LOGO UPSELLS
+// =========================
 
-  window.userSkippedUrl = false;
+window.userSkippedUrl = false;
+window.originalUrlText = null;
 
-  function initUpsellClicks() {
-    
-    // ----- DOMAIN UPSELL -----
-    var newSiteUrl = document.getElementById('new-site-url');
-    if (newSiteUrl) {
-      newSiteUrl.addEventListener('click', function() {
-        if (newSiteUrl.classList.contains('upsell-disabled')) return;
-        
-        var domainUpsell = document.getElementById('upsell-domain');
-        
-        if (newSiteUrl.classList.contains('added')) {
-          if (domainUpsell && domainUpsell.classList.contains('active')) domainUpsell.click();
-          newSiteUrl.classList.remove('added');
-        } else {
-          if (domainUpsell && !domainUpsell.classList.contains('active')) domainUpsell.click();
-          newSiteUrl.classList.add('added');
-        }
-        
-        if (typeof playBuildSound === 'function') playBuildSound();
-      });
+function initUpsellClicks() {
+  
+  // ----- DOMAIN UPSELL (all slides) -----
+  var allUrls = document.querySelectorAll('.new-site-url');
+  
+  allUrls.forEach(function(urlEl) {
+    // Store original text once
+    if (!window.originalUrlText) {
+      window.originalUrlText = urlEl.textContent;
     }
     
-    // ----- LOGO UPSELL -----
-    var logoAnchor = document.getElementById('logo-upsell-anchor');
-    
-    if (logoAnchor) {
-      logoAnchor.addEventListener('click', function() {
-        var brandUpsell = document.getElementById('upsell-brand');
-        
-        if (logoAnchor.classList.contains('added')) {
-          if (brandUpsell && brandUpsell.classList.contains('active')) brandUpsell.click();
-          logoAnchor.classList.remove('added');
-        } else {
-          if (brandUpsell && !brandUpsell.classList.contains('active')) brandUpsell.click();
-          logoAnchor.classList.add('added');
-        }
-        
-        if (typeof playBuildSound === 'function') playBuildSound();
-      });
-    }
-  }
-
-  // =========================
-  // SYNC CART ↔ BUTTONS
-  // =========================
-
-  function syncUpsellStates() {
-    var domainUpsell = document.getElementById('upsell-domain');
-    var brandUpsell = document.getElementById('upsell-brand');
-    var newSiteUrl = document.getElementById('new-site-url');
-    var logoAnchor = document.getElementById('logo-upsell-anchor');
-    
-    if (domainUpsell && newSiteUrl && !newSiteUrl.classList.contains('upsell-disabled')) {
-      if (domainUpsell.classList.contains('active') && !newSiteUrl.classList.contains('added')) {
-        newSiteUrl.classList.add('added');
-      } else if (!domainUpsell.classList.contains('active') && newSiteUrl.classList.contains('added')) {
-        newSiteUrl.classList.remove('added');
-      }
-    }
-    
-    if (brandUpsell && logoAnchor) {
-      if (brandUpsell.classList.contains('active') && !logoAnchor.classList.contains('added')) {
-        logoAnchor.classList.add('added');
-      } else if (!brandUpsell.classList.contains('active') && logoAnchor.classList.contains('added')) {
-        logoAnchor.classList.remove('added');
-      }
-    }
-  }
-
-  // =========================
-  // CONDITIONAL DOMAIN
-  // =========================
-
-  function initConditionalDomainUpsell() {
-    var newSiteUrl = document.getElementById('new-site-url');
-    if (!newSiteUrl) return;
-    
-    function check() {
-      if (window.userSkippedUrl || window.hasNoSite) {
-        newSiteUrl.classList.remove('upsell-disabled');
+    urlEl.addEventListener('click', function() {
+      if (urlEl.classList.contains('upsell-disabled')) return;
+      
+      var domainUpsell = document.getElementById('upsell-domain');
+      var isAdding = !urlEl.classList.contains('added');
+      
+      // Toggle cart upsell
+      if (isAdding) {
+        if (domainUpsell && !domainUpsell.classList.contains('active')) domainUpsell.click();
       } else {
-        newSiteUrl.classList.add('upsell-disabled');
+        if (domainUpsell && domainUpsell.classList.contains('active')) domainUpsell.click();
       }
-    }
-    
-    check();
-    setInterval(check, 300);
+      
+      // Update ALL url elements across all slides
+      allUrls.forEach(function(u) {
+        if (isAdding) {
+          u.classList.add('added');
+          u.textContent = '✓ Domain Service Added';
+        } else {
+          u.classList.remove('added');
+          u.textContent = window.originalUrlText;
+        }
+      });
+      
+      if (typeof playBuildSound === 'function') playBuildSound();
+    });
+  });
+  
+  // ----- LOGO UPSELL (all slides) -----
+  var allLogos = document.querySelectorAll('.logo-upsell-anchor');
+  
+  allLogos.forEach(function(logoEl) {
+    logoEl.addEventListener('click', function() {
+      var brandUpsell = document.getElementById('upsell-brand');
+      var isAdding = !logoEl.classList.contains('added');
+      
+      // Toggle cart upsell
+      if (isAdding) {
+        if (brandUpsell && !brandUpsell.classList.contains('active')) brandUpsell.click();
+      } else {
+        if (brandUpsell && brandUpsell.classList.contains('active')) brandUpsell.click();
+      }
+      
+      // Update ALL logo elements across all slides
+      allLogos.forEach(function(l) {
+        if (isAdding) {
+          l.classList.add('added');
+        } else {
+          l.classList.remove('added');
+        }
+      });
+      
+      if (typeof playBuildSound === 'function') playBuildSound();
+    });
+  });
+}
+
+// =========================
+// SYNC CART ↔ BUTTONS
+// =========================
+
+function syncUpsellStates() {
+  var domainUpsell = document.getElementById('upsell-domain');
+  var brandUpsell = document.getElementById('upsell-brand');
+  var allUrls = document.querySelectorAll('.new-site-url');
+  var allLogos = document.querySelectorAll('.logo-upsell-anchor');
+  
+  // Store original URL if not already stored
+  if (!window.originalUrlText && allUrls.length > 0) {
+    window.originalUrlText = allUrls[0].textContent;
   }
+  
+  // Sync domain across all slides
+  allUrls.forEach(function(urlEl) {
+    if (urlEl.classList.contains('upsell-disabled')) return;
+    
+    if (domainUpsell && domainUpsell.classList.contains('active') && !urlEl.classList.contains('added')) {
+      urlEl.classList.add('added');
+      urlEl.textContent = '✓ Domain Service Added';
+    } else if (domainUpsell && !domainUpsell.classList.contains('active') && urlEl.classList.contains('added')) {
+      urlEl.classList.remove('added');
+      urlEl.textContent = window.originalUrlText || 'https://www.yoursite.com';
+    }
+  });
+  
+  // Sync logo across all slides
+  allLogos.forEach(function(logoEl) {
+    if (brandUpsell && brandUpsell.classList.contains('active') && !logoEl.classList.contains('added')) {
+      logoEl.classList.add('added');
+    } else if (brandUpsell && !brandUpsell.classList.contains('active') && logoEl.classList.contains('added')) {
+      logoEl.classList.remove('added');
+    }
+  });
+}
 
-  // =========================
-  // INIT
-  // =========================
+// =========================
+// CONDITIONAL DOMAIN
+// =========================
 
-  initUpsellClicks();
-  initConditionalDomainUpsell();
-  setInterval(syncUpsellStates, 300);
+function initConditionalDomainUpsell() {
+  var allUrls = document.querySelectorAll('.new-site-url');
+  if (allUrls.length === 0) return;
+  
+  function check() {
+    allUrls.forEach(function(urlEl) {
+      if (window.userSkippedUrl || window.hasNoSite) {
+        urlEl.classList.remove('upsell-disabled');
+      } else {
+        urlEl.classList.add('upsell-disabled');
+      }
+    });
+  }
+  
+  check();
+  setInterval(check, 300);
+}
 
   });
