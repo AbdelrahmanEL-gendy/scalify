@@ -1169,9 +1169,12 @@ if (leadNumber) leadNumber.textContent = '$0';
     });
   });
 
-  // =========================
+ // =========================
   // DOMAIN & LOGO UPSELLS
   // =========================
+
+  // Track if user skipped URL input
+  window.userSkippedUrl = false;
 
   function initUpsellClicks() {
     
@@ -1179,6 +1182,9 @@ if (leadNumber) leadNumber.textContent = '$0';
     var newSiteUrl = document.getElementById('new-site-url');
     if (newSiteUrl) {
       newSiteUrl.addEventListener('click', function() {
+        // Only work if not disabled
+        if (newSiteUrl.classList.contains('upsell-disabled')) return;
+        
         var domainUpsell = document.getElementById('upsell-domain');
         
         if (newSiteUrl.classList.contains('added')) {
@@ -1197,7 +1203,7 @@ if (leadNumber) leadNumber.textContent = '$0';
       });
     }
     
-    // ----- LOGO UPSELL (Floating Button) -----
+    // ----- LOGO UPSELL (Overlay Button) -----
     var floatingLogo = document.getElementById('floating-logo-upsell');
     if (floatingLogo) {
       floatingLogo.addEventListener('click', function() {
@@ -1233,7 +1239,7 @@ if (leadNumber) leadNumber.textContent = '$0';
     var floatingLogo = document.getElementById('floating-logo-upsell');
     
     // Sync domain
-    if (domainUpsell && newSiteUrl) {
+    if (domainUpsell && newSiteUrl && !newSiteUrl.classList.contains('upsell-disabled')) {
       if (domainUpsell.classList.contains('active') && !newSiteUrl.classList.contains('added')) {
         newSiteUrl.classList.add('added');
       } else if (!domainUpsell.classList.contains('active') && newSiteUrl.classList.contains('added')) {
@@ -1253,10 +1259,97 @@ if (leadNumber) leadNumber.textContent = '$0';
     }
   }
 
-  // Initialize upsells
-  initUpsellClicks();
+  // =========================
+  // CONDITIONAL DOMAIN UPSELL
+  // =========================
 
-  // Run sync every 300ms
+  function initConditionalDomainUpsell() {
+    var newSiteUrl = document.getElementById('new-site-url');
+    if (!newSiteUrl) return;
+    
+    function checkDomainUpsellVisibility() {
+      if (window.userSkippedUrl) {
+        newSiteUrl.classList.remove('upsell-disabled');
+      } else {
+        newSiteUrl.classList.add('upsell-disabled');
+      }
+    }
+    
+    // Initial check
+    checkDomainUpsellVisibility();
+    
+    // Check periodically
+    setInterval(checkDomainUpsellVisibility, 300);
+  }
+
+  // =========================
+  // UPSELL TOOLTIPS
+  // =========================
+
+  function initUpsellTooltips() {
+    var tooltip = document.getElementById('upsell-tooltip');
+    if (!tooltip) return;
+    
+    var newSiteUrl = document.getElementById('new-site-url');
+    var floatingLogo = document.getElementById('floating-logo-upsell');
+    var tooltipShown = { url: false, logo: false };
+    
+    function showTooltip(targetEl, message) {
+      if (!targetEl) return;
+      
+      var rect = targetEl.getBoundingClientRect();
+      var tooltipText = tooltip.querySelector('.tooltip-text');
+      
+      if (tooltipText) tooltipText.textContent = message;
+      
+      tooltip.style.left = rect.left + 'px';
+      tooltip.style.top = (rect.bottom + 10) + 'px';
+      tooltip.classList.add('visible');
+    }
+    
+    function hideTooltip() {
+      tooltip.classList.remove('visible');
+    }
+    
+    function checkUrlTooltip() {
+      if (tooltipShown.url) return;
+      if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
+      if (!newSiteUrl) return;
+      if (!window.userSkippedUrl) return;
+      
+      tooltipShown.url = true;
+      showTooltip(newSiteUrl, 'Click to add domain setup!');
+      setTimeout(hideTooltip, 4000);
+    }
+    
+    function checkLogoTooltip() {
+      if (tooltipShown.logo) return;
+      if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
+      if (!floatingLogo) return;
+      
+      var delay = tooltipShown.url ? 5000 : 1000;
+      
+      setTimeout(function() {
+        if (tooltipShown.logo) return;
+        tooltipShown.logo = true;
+        showTooltip(floatingLogo, 'Click to add custom logo!');
+        setTimeout(hideTooltip, 4000);
+      }, delay);
+    }
+    
+    setInterval(function() {
+      checkUrlTooltip();
+      checkLogoTooltip();
+    }, 500);
+  }
+
+  // =========================
+  // INITIALIZE ALL UPSELLS
+  // =========================
+
+  initUpsellClicks();
+  initConditionalDomainUpsell();
+  initUpsellTooltips();
   setInterval(syncUpsellStates, 300);
 
 });
