@@ -1271,3 +1271,5 @@ if (leadNumber) leadNumber.textContent = '$0';
   initUpsellClicks();
   initConditionalDomainUpsell();
   setInterval(syncUpsellStates, 300);
+
+  });
