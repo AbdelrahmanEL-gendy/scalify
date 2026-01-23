@@ -1173,7 +1173,6 @@ if (leadNumber) leadNumber.textContent = '$0';
   // DOMAIN & LOGO UPSELLS
   // =========================
 
-  // Track if user skipped URL input
   window.userSkippedUrl = false;
 
   function initUpsellClicks() {
@@ -1182,7 +1181,6 @@ if (leadNumber) leadNumber.textContent = '$0';
     var newSiteUrl = document.getElementById('new-site-url');
     if (newSiteUrl) {
       newSiteUrl.addEventListener('click', function() {
-        // Only work if not disabled
         if (newSiteUrl.classList.contains('upsell-disabled')) return;
         
         var domainUpsell = document.getElementById('upsell-domain');
@@ -1203,8 +1201,10 @@ if (leadNumber) leadNumber.textContent = '$0';
       });
     }
     
-    // ----- LOGO UPSELL (Overlay Button) -----
+    // ----- LOGO UPSELL (Button) -----
     var floatingLogo = document.getElementById('floating-logo-upsell');
+    var logoBtnText = document.getElementById('logo-btn-text');
+    
     if (floatingLogo) {
       floatingLogo.addEventListener('click', function() {
         var brandUpsell = document.getElementById('upsell-brand');
@@ -1214,13 +1214,13 @@ if (leadNumber) leadNumber.textContent = '$0';
             brandUpsell.click();
           }
           floatingLogo.classList.remove('added');
-          floatingLogo.innerHTML = '<span class="logo-icon">✦</span> Add Logo';
+          if (logoBtnText) logoBtnText.textContent = 'Add Logo';
         } else {
           if (brandUpsell && !brandUpsell.classList.contains('active')) {
             brandUpsell.click();
           }
           floatingLogo.classList.add('added');
-          floatingLogo.innerHTML = '<span class="logo-icon">✓</span> Logo Added';
+          if (logoBtnText) logoBtnText.textContent = 'Logo Added ✓';
         }
         
         if (typeof playBuildSound === 'function') playBuildSound();
@@ -1237,8 +1237,8 @@ if (leadNumber) leadNumber.textContent = '$0';
     var brandUpsell = document.getElementById('upsell-brand');
     var newSiteUrl = document.getElementById('new-site-url');
     var floatingLogo = document.getElementById('floating-logo-upsell');
+    var logoBtnText = document.getElementById('logo-btn-text');
     
-    // Sync domain
     if (domainUpsell && newSiteUrl && !newSiteUrl.classList.contains('upsell-disabled')) {
       if (domainUpsell.classList.contains('active') && !newSiteUrl.classList.contains('added')) {
         newSiteUrl.classList.add('added');
@@ -1247,14 +1247,13 @@ if (leadNumber) leadNumber.textContent = '$0';
       }
     }
     
-    // Sync logo
     if (brandUpsell && floatingLogo) {
       if (brandUpsell.classList.contains('active') && !floatingLogo.classList.contains('added')) {
         floatingLogo.classList.add('added');
-        floatingLogo.innerHTML = '<span class="logo-icon">✓</span> Logo Added';
+        if (logoBtnText) logoBtnText.textContent = 'Logo Added ✓';
       } else if (!brandUpsell.classList.contains('active') && floatingLogo.classList.contains('added')) {
         floatingLogo.classList.remove('added');
-        floatingLogo.innerHTML = '<span class="logo-icon">✦</span> Add Logo';
+        if (logoBtnText) logoBtnText.textContent = 'Add Logo';
       }
     }
   }
@@ -1268,17 +1267,14 @@ if (leadNumber) leadNumber.textContent = '$0';
     if (!newSiteUrl) return;
     
     function checkDomainUpsellVisibility() {
-      if (window.userSkippedUrl) {
+      if (window.userSkippedUrl || window.hasNoSite) {
         newSiteUrl.classList.remove('upsell-disabled');
       } else {
         newSiteUrl.classList.add('upsell-disabled');
       }
     }
     
-    // Initial check
     checkDomainUpsellVisibility();
-    
-    // Check periodically
     setInterval(checkDomainUpsellVisibility, 300);
   }
 
@@ -1288,6 +1284,7 @@ if (leadNumber) leadNumber.textContent = '$0';
 
   function initUpsellTooltips() {
     var tooltip = document.getElementById('upsell-tooltip');
+    var tooltipText = document.getElementById('tooltip-text');
     if (!tooltip) return;
     
     var newSiteUrl = document.getElementById('new-site-url');
@@ -1298,7 +1295,6 @@ if (leadNumber) leadNumber.textContent = '$0';
       if (!targetEl) return;
       
       var rect = targetEl.getBoundingClientRect();
-      var tooltipText = tooltip.querySelector('.tooltip-text');
       
       if (tooltipText) tooltipText.textContent = message;
       
@@ -1311,35 +1307,39 @@ if (leadNumber) leadNumber.textContent = '$0';
       tooltip.classList.remove('visible');
     }
     
-    function checkUrlTooltip() {
-      if (tooltipShown.url) return;
-      if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
-      if (!newSiteUrl) return;
-      if (!window.userSkippedUrl) return;
-      
-      tooltipShown.url = true;
-      showTooltip(newSiteUrl, 'Click to add domain setup!');
-      setTimeout(hideTooltip, 4000);
-    }
-    
     function checkLogoTooltip() {
       if (tooltipShown.logo) return;
       if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
       if (!floatingLogo) return;
-      
-      var delay = tooltipShown.url ? 5000 : 1000;
       
       setTimeout(function() {
         if (tooltipShown.logo) return;
         tooltipShown.logo = true;
         showTooltip(floatingLogo, 'Click to add custom logo!');
         setTimeout(hideTooltip, 4000);
-      }, delay);
+      }, 1500);
+    }
+    
+    function checkUrlTooltip() {
+      if (tooltipShown.url) return;
+      if (typeof currentPanelNumber === 'undefined' || currentPanelNumber < 4) return;
+      if (!newSiteUrl) return;
+      if (!window.userSkippedUrl && !window.hasNoSite) return;
+      
+      tooltipShown.url = true;
+      showTooltip(newSiteUrl, 'Click to add domain setup!');
+      setTimeout(function() {
+        hideTooltip();
+        checkLogoTooltip();
+      }, 4000);
     }
     
     setInterval(function() {
-      checkUrlTooltip();
-      checkLogoTooltip();
+      if (window.userSkippedUrl || window.hasNoSite) {
+        checkUrlTooltip();
+      } else {
+        checkLogoTooltip();
+      }
     }, 500);
   }
 
