@@ -1146,7 +1146,8 @@ if (leadNumber) leadNumber.textContent = '$0';
       if (this.classList.contains('next-btn') && this.getAttribute('data-disabled') === 'true') return;
       
       var targetPanelId = this.getAttribute('data-go-to');
-      var targetPanelNumber = parseInt(targetPanelId.replace('panel-', ''));
+      var rawPanel = targetPanelId.replace('panel-', '');
+      var targetPanelNumber = (rawPanel === '1b') ? '1b' : parseInt(rawPanel);
       var rightOnly = this.getAttribute('data-right-only') === 'true';
       var direction = targetPanelNumber > currentPanelNumber ? 'forward' : 'back';
       
