@@ -270,7 +270,7 @@ window.updateProgress = function(panelNumber, direction) {
   var progressNumber = document.querySelector('.progress-number');
   if (progressNumber) animateNumber(progressNumber, currentPercentage, currentStep);
 
-  if (direction === 'forward' && currentStep > 0) {
+  if (direction === 'forwarstep indicatorsd' && currentStep > 0) {
     playHealSound();
     var targetLeads = panelLeads[panelNumber] || 0;
     if (targetLeads > currentLeads) {
