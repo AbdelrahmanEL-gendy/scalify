@@ -259,74 +259,17 @@ function animateNumber(element, start, target) {
   requestAnimationFrame(step);
 }
 
-// Step mapping - which panel = which grouped step
-var panelToStep = {
-  1: 0,       // Welcome - no step yet
-  '1b': 1,    // Business name = Setup
-  2: 1,       // Scan input = Setup
-  3: 1,       // Scanning animation = Setup
-  4: 1,       // Industry = Setup
-  5: 2,       // Package/Tier = Customize
-  6: 2,       // SEO Upsell = Customize
-  7: 3,       // Showcase = Review
-  8: 4,       // Signup = Account
-  9: 4,       // Contract = Account
-  10: 5       // Checkout = Pay
-};
-
-var totalSteps = 5;
-
 window.updateProgress = function(panelNumber, direction) {
-  var currentStep = panelToStep[panelNumber] || 0;
+  var totalSteps = 9;
+  var currentStep = Math.min(panelNumber - 1, totalSteps);
   var fillPercentage = (currentStep / totalSteps) * 100;
-  
-  // Show progress bar after panel 1
-  var progressWrapper = document.querySelector('.progress-wrapper');
-  if (progressWrapper) {
-    if (panelNumber === 1) {
-      progressWrapper.classList.remove('visible');
-    } else {
-      progressWrapper.classList.add('visible');
-    }
-  }
-  
-  // Update the yellow fill bar
+
   var progressFill = document.querySelector('.progress-fill');
   if (progressFill) progressFill.style.width = fillPercentage + '%';
-  
-  // Update the number display
+
   var progressNumber = document.querySelector('.progress-number');
-  if (progressNumber) {
-    progressNumber.textContent = currentStep + '/' + totalSteps;
-  }
-  
-  // Update step indicators
-  var stepIndicators = document.querySelectorAll('.step-indicator');
-  stepIndicators.forEach(function(indicator) {
-    var step = parseInt(indicator.getAttribute('data-step'));
-    var dot = indicator.querySelector('.step-dot');
-    
-    indicator.classList.remove('active', 'completed');
-    
-    if (step < currentStep) {
-      indicator.classList.add('completed');
-      if (dot) dot.textContent = '';
-    } else if (step === currentStep) {
-      indicator.classList.add('active');
-      if (dot) dot.textContent = step;
-    } else {
-      if (dot) dot.textContent = step;
-    }
-  });
-  
-  // Update connecting line fill
-  var stepLineFill = document.getElementById('step-line-fill');
-  if (stepLineFill) {
-    var linePercentage = currentStep > 1 ? ((currentStep - 1) / (totalSteps - 1)) * 100 : 0;
-    stepLineFill.style.width = linePercentage + '%';
-  }
-  
-  // Play sound and update leads
+  if (progressNumber) animateNumber(progressNumber, currentPercentage, currentStep);
+
   if (direction === 'forward' && currentStep > 0) {
     playHealSound();
     var targetLeads = panelLeads[panelNumber] || 0;
@@ -334,10 +277,8 @@ window.updateProgress = function(panelNumber, direction) {
       setTimeout(function() { updateLeads(targetLeads); }, 500);
     }
   }
-  
   currentPercentage = currentStep;
 };
-
 // ==================== ROBOT & PANELS ====================
 
 var currentTypeInterval = null;
@@ -950,39 +891,6 @@ window.sendToZapier = function() {
 
 document.addEventListener('DOMContentLoaded', function() {
   window.siteConfig = { industry: null, style: null, colors: null };
-
-  // Create step indicators dynamically
-var progressWrapper = document.querySelector('.progress-wrapper');
-if (progressWrapper) {
-  var stepHTML = `
-    <div class="step-indicators">
-      <div class="step-line">
-        <div class="step-line-fill" id="step-line-fill"></div>
-      </div>
-      <div class="step-indicator" data-step="1">
-        <div class="step-dot">1</div>
-        <span class="step-label">Setup</span>
-      </div>
-      <div class="step-indicator" data-step="2">
-        <div class="step-dot">2</div>
-        <span class="step-label">Customize</span>
-      </div>
-      <div class="step-indicator" data-step="3">
-        <div class="step-dot">3</div>
-        <span class="step-label">Review</span>
-      </div>
-      <div class="step-indicator" data-step="4">
-        <div class="step-dot">4</div>
-        <span class="step-label">Account</span>
-      </div>
-      <div class="step-indicator" data-step="5">
-        <div class="step-dot">5</div>
-        <span class="step-label">Pay</span>
-      </div>
-    </div>
-  `;
-  progressWrapper.insertAdjacentHTML('beforeend', stepHTML);
-}
   
  // URL UPDATER - handles both tabs
 function updateSiteUrls() {
