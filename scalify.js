@@ -260,25 +260,18 @@ function animateNumber(element, start, target) {
 }
 
 // ==================== UPDATE PROGRESS ====================
-
 window.updateProgress = function(panelNumber, direction) {
-  console.log('=== updateProgress called ===');
-  console.log('panelNumber:', panelNumber);
-  console.log('direction:', direction);
-  
-  // Show/hide progress bar based on panel
+  // Show/hide progress bar based on active panel
   var progressWrapper = document.querySelector('.progress-wrapper');
-  console.log('progressWrapper found:', progressWrapper);
-  
   if (progressWrapper) {
-    if (panelNumber === 1 || panelNumber === '1') {
-      console.log('Hiding progress bar');
+    var activePanel = document.querySelector('.content-panel.active');
+    var activePanelId = activePanel ? activePanel.id : '';
+    
+    if (activePanelId === 'panel-1') {
       progressWrapper.classList.remove('visible');
     } else {
-      console.log('Showing progress bar');
       progressWrapper.classList.add('visible');
     }
-    console.log('progressWrapper classes:', progressWrapper.className);
   }
 
   var totalSteps = 9;
@@ -1146,8 +1139,7 @@ if (leadNumber) leadNumber.textContent = '$0';
       if (this.classList.contains('next-btn') && this.getAttribute('data-disabled') === 'true') return;
       
       var targetPanelId = this.getAttribute('data-go-to');
-      var rawPanel = targetPanelId.replace('panel-', '');
-      var targetPanelNumber = (rawPanel === '1b') ? '1b' : parseInt(rawPanel);
+      var targetPanelNumber = parseInt(targetPanelId.replace('panel-', ''));
       var rightOnly = this.getAttribute('data-right-only') === 'true';
       var direction = targetPanelNumber > currentPanelNumber ? 'forward' : 'back';
       
