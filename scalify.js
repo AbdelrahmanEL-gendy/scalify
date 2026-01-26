@@ -893,6 +893,39 @@ window.sendToZapier = function() {
 document.addEventListener('DOMContentLoaded', function() {
   window.siteConfig = { industry: null, style: null, colors: null };
 
+  // Create step indicators dynamically
+var progressWrapper = document.querySelector('.progress-wrapper');
+if (progressWrapper) {
+  var stepHTML = `
+    <div class="step-indicators">
+      <div class="step-line">
+        <div class="step-line-fill" id="step-line-fill"></div>
+      </div>
+      <div class="step-indicator" data-step="1">
+        <div class="step-dot">1</div>
+        <span class="step-label">Setup</span>
+      </div>
+      <div class="step-indicator" data-step="2">
+        <div class="step-dot">2</div>
+        <span class="step-label">Customize</span>
+      </div>
+      <div class="step-indicator" data-step="3">
+        <div class="step-dot">3</div>
+        <span class="step-label">Review</span>
+      </div>
+      <div class="step-indicator" data-step="4">
+        <div class="step-dot">4</div>
+        <span class="step-label">Account</span>
+      </div>
+      <div class="step-indicator" data-step="5">
+        <div class="step-dot">5</div>
+        <span class="step-label">Pay</span>
+      </div>
+    </div>
+  `;
+  progressWrapper.insertAdjacentHTML('beforeend', stepHTML);
+}
+  
  // URL UPDATER - handles both tabs
 function updateSiteUrls() {
   var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
