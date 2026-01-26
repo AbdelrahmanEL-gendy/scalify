@@ -260,17 +260,27 @@ function animateNumber(element, start, target) {
 }
 
 window.updateProgress = function(panelNumber, direction) {
+  // Show/hide progress bar based on panel
+  var progressWrapper = document.querySelector('.progress-wrapper');
+  if (progressWrapper) {
+    if (panelNumber === 1) {
+      progressWrapper.classList.remove('visible');
+    } else {
+      progressWrapper.classList.add('visible');
+    }
+  }
+
   var totalSteps = 9;
   var currentStep = Math.min(panelNumber - 1, totalSteps);
   var fillPercentage = (currentStep / totalSteps) * 100;
-
+  
   var progressFill = document.querySelector('.progress-fill');
   if (progressFill) progressFill.style.width = fillPercentage + '%';
-
+  
   var progressNumber = document.querySelector('.progress-number');
   if (progressNumber) animateNumber(progressNumber, currentPercentage, currentStep);
-
-  if (direction === 'forwarstep indicatorsd' && currentStep > 0) {
+  
+  if (direction === 'forward' && currentStep > 0) {
     playHealSound();
     var targetLeads = panelLeads[panelNumber] || 0;
     if (targetLeads > currentLeads) {
@@ -979,7 +989,14 @@ setTimeout(function() { window.showRobotMessage('panel-1'); }, 500);
     if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
   });
   
- // Start at 0/9 - Memberstack auth will update for logged-in returning users
+ // Hide progress bar on start
+var progressWrapper = document.querySelector('.progress-wrapper');
+if (progressWrapper) progressWrapper.classList.remove('visible');
+
+// Start at 0/9 - Memberstack auth will update for logged-in returning users
+var progressFill = document.querySelector('.progress-fill');
+  
+  // Start at 0/9 - Memberstack auth will update for logged-in returning users
 var progressFill = document.querySelector('.progress-fill');
 if (progressFill) progressFill.style.width = '0%';
 var progressNumber = document.querySelector('.progress-number');
