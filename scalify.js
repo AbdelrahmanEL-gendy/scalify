@@ -326,12 +326,19 @@ function scaleRobot(panelNumber) {
     if (splineContainer) splineContainer.classList.add('hidden');
     if (speechBubble) speechBubble.classList.add('hidden');
     if (rightContent) rightContent.classList.add('expanded');
-    if (leadCounter) leadCounter.classList.add('visible');
   } else {
     if (splineContainer) splineContainer.classList.remove('hidden');
     if (speechBubble) speechBubble.classList.remove('hidden');
     if (rightContent) rightContent.classList.remove('expanded');
-    if (leadCounter) leadCounter.classList.remove('visible');
+  }
+  
+  // Lead counter from panel 6 onwards
+  if (leadCounter) {
+    if (panelNumber >= 6) {
+      leadCounter.classList.add('visible');
+    } else {
+      leadCounter.classList.remove('visible');
+    }
   }
 }
 
