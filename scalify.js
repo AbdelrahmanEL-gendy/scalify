@@ -900,16 +900,15 @@ window.sendToZapier = function() {
 document.addEventListener('DOMContentLoaded', function() {
   window.siteConfig = { industry: null, style: null, colors: null };
 
-  // Show progress bar when start button is clicked
-var startBtn = document.getElementById('start-btn');
-if (startBtn) {
-  startBtn.addEventListener('click', function() {
-    var progressWrapper = document.querySelector('.progress-wrapper');
-    if (progressWrapper) {
-      progressWrapper.classList.add('visible');
+  // Show progress bar when start button is clicked (using delegation)
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('#start-btn')) {
+      var progressWrapper = document.querySelector('.progress-wrapper');
+      if (progressWrapper) {
+        progressWrapper.classList.add('visible');
+      }
     }
   });
-}
   
  // URL UPDATER - handles both tabs
 function updateSiteUrls() {
