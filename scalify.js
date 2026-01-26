@@ -259,15 +259,26 @@ function animateNumber(element, start, target) {
   requestAnimationFrame(step);
 }
 
+// ==================== UPDATE PROGRESS ====================
+
 window.updateProgress = function(panelNumber, direction) {
+  console.log('=== updateProgress called ===');
+  console.log('panelNumber:', panelNumber);
+  console.log('direction:', direction);
+  
   // Show/hide progress bar based on panel
   var progressWrapper = document.querySelector('.progress-wrapper');
+  console.log('progressWrapper found:', progressWrapper);
+  
   if (progressWrapper) {
-    if (panelNumber === 1) {
+    if (panelNumber === 1 || panelNumber === '1') {
+      console.log('Hiding progress bar');
       progressWrapper.classList.remove('visible');
     } else {
+      console.log('Showing progress bar');
       progressWrapper.classList.add('visible');
     }
+    console.log('progressWrapper classes:', progressWrapper.className);
   }
 
   var totalSteps = 9;
@@ -289,6 +300,7 @@ window.updateProgress = function(panelNumber, direction) {
   }
   currentPercentage = currentStep;
 };
+
 // ==================== ROBOT & PANELS ====================
 
 var currentTypeInterval = null;
