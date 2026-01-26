@@ -320,15 +320,6 @@ function scaleRobot(panelNumber) {
   var splineContainer = document.querySelector('.spline-container');
   var speechBubble = document.querySelector('.speech-bubble');
   var rightContent = document.querySelector('.right-content');
-  var leadCounter = document.getElementById('lead-counter');
-  
-  // Get actual right panel number
-  var rightPanel = document.querySelector('.right-panel.active');
-  var rightPanelNum = 0;
-  if (rightPanel && rightPanel.id) {
-    var match = rightPanel.id.match(/right-panel-(\d+)/);
-    if (match) rightPanelNum = parseInt(match[1]);
-  }
   
   if (panelNumber >= 4) {
     if (splineContainer) splineContainer.classList.add('hidden');
@@ -338,25 +329,6 @@ function scaleRobot(panelNumber) {
     if (splineContainer) splineContainer.classList.remove('hidden');
     if (speechBubble) speechBubble.classList.remove('hidden');
     if (rightContent) rightContent.classList.remove('expanded');
-  }
-  
-  // Lead counter from right-panel-6 onwards
-  if (leadCounter) {
-    if (rightPanelNum >= 6) {
-      leadCounter.classList.add('visible');
-    } else {
-      leadCounter.classList.remove('visible');
-    }
-  }
-}
-  
-  // Lead counter from panel 6 onwards
-  if (leadCounter) {
-    if (panelNumber >= 6) {
-      leadCounter.classList.add('visible');
-    } else {
-      leadCounter.classList.remove('visible');
-    }
   }
 }
 
@@ -932,6 +904,26 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   }, 300);
+
+  // Show lead counter from panel 6 onwards
+setInterval(function() {
+  var rightPanel = document.querySelector('.right-panel.active');
+  var leadCounter = document.getElementById('lead-counter');
+  var rightPanelNum = 0;
+  
+  if (rightPanel && rightPanel.id) {
+    var match = rightPanel.id.match(/right-panel-(\d+)/);
+    if (match) rightPanelNum = parseInt(match[1]);
+  }
+  
+  if (leadCounter) {
+    if (rightPanelNum >= 6) {
+      leadCounter.classList.add('visible');
+    } else {
+      leadCounter.classList.remove('visible');
+    }
+  }
+}, 300);
 
   
  // URL UPDATER - handles both tabs
