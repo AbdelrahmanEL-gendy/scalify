@@ -261,12 +261,6 @@ function animateNumber(element, start, target) {
 
 // ==================== UPDATE PROGRESS ====================
 window.updateProgress = function(panelNumber, direction) {
-  // Hide progress bar only on panel 1
-  var progressWrapper = document.querySelector('.progress-wrapper');
-  if (progressWrapper && panelNumber === 1) {
-    progressWrapper.classList.remove('visible');
-  }
-
   var totalSteps = 9;
   var currentStep = Math.min(panelNumber - 1, totalSteps);
   var fillPercentage = (currentStep / totalSteps) * 100;
@@ -900,15 +894,20 @@ window.sendToZapier = function() {
 document.addEventListener('DOMContentLoaded', function() {
   window.siteConfig = { industry: null, style: null, colors: null };
 
-  // Show progress bar when start button is clicked (using delegation)
-  document.addEventListener('click', function(e) {
-    if (e.target.closest('#start-btn')) {
-      var progressWrapper = document.querySelector('.progress-wrapper');
-      if (progressWrapper) {
+  // Show progress bar on all panels except panel-1
+  setInterval(function() {
+    var panel1 = document.getElementById('panel-1');
+    var progressWrapper = document.querySelector('.progress-wrapper');
+    
+    if (progressWrapper) {
+      if (panel1 && panel1.classList.contains('active')) {
+        progressWrapper.classList.remove('visible');
+      } else {
         progressWrapper.classList.add('visible');
       }
     }
-  });
+  }, 300);
+
   
  // URL UPDATER - handles both tabs
 function updateSiteUrls() {
