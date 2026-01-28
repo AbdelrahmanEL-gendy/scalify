@@ -507,7 +507,7 @@ window.sendToZapier = function() {
         window.isLoggedInUser = true;
         showLoggedInState(member);
         loadSavedSite(member);
-        setTimeout(forceToPanel10, 500);
+        setTimeout(forceToPanel9, 500);
       }
     });
     
@@ -565,7 +565,7 @@ window.sendToZapier = function() {
             window.isLoggedInUser = true;
             showLoggedInState(member);
             saveSiteToMember();
-            forceToPanel10();
+            forceToPanel9();
           }).catch(function(error) {
             console.error('Signup error:', error);
             alert('Signup failed: ' + (error.message || 'Please try again'));
@@ -612,7 +612,7 @@ window.sendToZapier = function() {
             window.isLoggedInUser = true;
             showLoggedInState(member);
             loadSavedSite(member);
-            forceToPanel10();
+            forceToPanel9();
           }).catch(function(error) {
             console.error('Login error:', error);
             alert('Login failed: ' + (error.message || 'Please try again'));
@@ -628,8 +628,8 @@ window.sendToZapier = function() {
     }, 1000);
   }
   
-  function forceToPanel10() {
-    console.log('=== FORCING TO PANEL 10 ===');
+  function forceToPanel9() {
+    console.log('=== FORCING TO PANEL 9 ===');
     
     // Hide step indicator
     var stepIndicator = document.querySelector('.step-indicator');
@@ -647,11 +647,11 @@ window.sendToZapier = function() {
     document.querySelectorAll('.right-panel').forEach(function(p) {
       p.classList.remove('active');
     });
-    var panel10 = document.getElementById('right-panel-10');
-    if (panel10) {
-      panel10.classList.add('active');
-      panel10.style.opacity = '1';
-      panel10.style.transform = 'translateY(0)';
+    var panel9 = document.getElementById('right-panel-9');
+    if (panel9) {
+      panel9.classList.add('active');
+      panel9.style.opacity = '1';
+      panel9.style.transform = 'translateY(0)';
     }
     
     var splineContainer = document.querySelector('.spline-container');
