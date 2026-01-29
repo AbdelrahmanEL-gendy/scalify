@@ -143,7 +143,7 @@ function playBuildSound() {
 }
 
 // ==================== LEADS FUNCTIONS ====================
-/*
+
 function createSparkles(container, count) {
   for (var i = 0; i < count; i++) {
     var sparkle = document.createElement('div');
@@ -259,7 +259,7 @@ function animateNumber(element, start, target) {
   }
   requestAnimationFrame(step);
 }
-*/
+
 // ==================== UPDATE PROGRESS ====================
 window.updateProgress = function(panelNumber, direction) {
   var totalSteps = 9;
