@@ -1261,7 +1261,8 @@ window.userSkippedUrl = false;
 window.originalUrlText = null;
 
 function initUpsellClicks() {
-  
+
+  return;
   // ----- DOMAIN UPSELL (all slides) -----
   var allUrls = document.querySelectorAll('.new-site-url');
   
