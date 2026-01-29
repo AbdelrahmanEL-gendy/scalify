@@ -270,14 +270,8 @@ window.updateProgress = function(panelNumber, direction) {
   if (progressFill) progressFill.style.width = fillPercentage + '%';
   
   var progressNumber = document.querySelector('.progress-number');
-  if (progressNumber) animateNumber(progressNumber, currentPercentage, currentStep);
+if (progressNumber) progressNumber.textContent = currentStep + '/9';  // ✅ THIS LINE
   
-  if (direction === 'forward' && currentStep > 0) {
-    playHealSound();
-    var targetLeads = panelLeads[panelNumber] || 0;
-    if (targetLeads > currentLeads) {
-      setTimeout(function() { updateLeads(targetLeads); }, 500);
-    }
   }
   currentPercentage = currentStep;
 };
@@ -996,7 +990,6 @@ updateSiteUrls();
       }
       
       window.updateProgress(targetPanelNumber, 'back');
-      loseLeads(panelLeads[targetPanelNumber] || 0);
       window.showRobotMessage(goTo);
       currentPanelNumber = targetPanelNumber;
     });
