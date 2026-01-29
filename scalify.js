@@ -905,6 +905,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   }, 300);
 
+  // Add inside your DOMContentLoaded:
+updateSiteUrls();
+setInterval(updateSiteUrls, 300);
+console.log('[URL Updater] Initialized');
+
   // Show lead counter from panel 6 onwards
 setInterval(function() {
   var rightPanel = document.querySelector('.right-panel.active');
@@ -926,33 +931,72 @@ setInterval(function() {
 }, 300);
 
   
- // URL UPDATER - handles both tabs
+ / ==========================================
+// FIXED URL UPDATER - with debugging
+// Replace your existing updateSiteUrls() function with this
+// ==========================================
+
 function updateSiteUrls() {
   var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
+  var businessName = (window.siteConfig && window.siteConfig.businessName) || 
+                     localStorage.getItem('scalify_businessName') || 
+                     null;
+  
+  console.log('[URL Updater] Running...');
+  console.log('[URL Updater] scannedUrl:', scannedUrl);
+  console.log('[URL Updater] businessName:', businessName);
+  
   var displayUrl;
   
   if (scannedUrl && scannedUrl !== 'skipped') {
     // User entered a URL - show their actual site with https://www.
     var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
     displayUrl = 'https://www.' + cleanUrl;
+  } else if (businessName) {
+    // User skipped OR no URL yet - show businessname.com with https://www.
+    var cleanName = businessName.toLowerCase().replace(/[^a-z0-9]/g, '');
+    displayUrl = 'https://www.' + cleanName + '.com';
   } else {
-    // User skipped - show businessname.com with https://www.
-    var businessName = (window.siteConfig && window.siteConfig.businessName) || 
-                       localStorage.getItem('scalify_businessName') || 
-                       'your-new-website';
-    displayUrl = 'https://www.' + businessName.toLowerCase().replace(/[^a-z0-9]/g, '') + '.com';
+    // No data at all
+    displayUrl = 'your-new-website.com';
   }
   
-  // Update both tabs
-  var newSiteUrl = document.getElementById('new-site-url');
-  if (newSiteUrl) newSiteUrl.textContent = displayUrl;
+  console.log('[URL Updater] displayUrl:', displayUrl);
   
-  var oldSiteUrl = document.getElementById('old-site-url');
-  if (oldSiteUrl) oldSiteUrl.textContent = displayUrl;
+  // Try BY ID first (for single instances)
+  var newSiteUrlById = document.getElementById('new-site-url');
+  if (newSiteUrlById) {
+    console.log('[URL Updater] ✓ Found #new-site-url by ID');
+    newSiteUrlById.textContent = displayUrl;
+  } else {
+    console.warn('[URL Updater] ✗ Could not find #new-site-url by ID');
+  }
+  
+  var oldSiteUrlById = document.getElementById('old-site-url');
+  if (oldSiteUrlById) {
+    console.log('[URL Updater] ✓ Found #old-site-url by ID');
+    oldSiteUrlById.textContent = displayUrl;
+  } else {
+    console.warn('[URL Updater] ✗ Could not find #old-site-url by ID');
+  }
+  
+  // ALSO try BY CLASS (for multiple instances/components)
+  var newSiteUrlsByClass = document.querySelectorAll('.new-site-url');
+  console.log('[URL Updater] Found', newSiteUrlsByClass.length, 'elements with class .new-site-url');
+  newSiteUrlsByClass.forEach(function(el) {
+    el.textContent = displayUrl;
+  });
+  
+  var oldSiteUrlsByClass = document.querySelectorAll('.old-site-url');
+  console.log('[URL Updater] Found', oldSiteUrlsByClass.length, 'elements with class .old-site-url');
+  oldSiteUrlsByClass.forEach(function(el) {
+    el.textContent = displayUrl;
+  });
 }
 
+// Make it global
 window.updateSiteUrls = updateSiteUrls;
-updateSiteUrls();
+
   
   // BACK BUTTONS
   document.querySelectorAll('.back-btn').forEach(function(btn) {
