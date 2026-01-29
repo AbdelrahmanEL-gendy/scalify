@@ -143,7 +143,7 @@ function playBuildSound() {
 }
 
 // ==================== LEADS FUNCTIONS ====================
-
+/*
 function createSparkles(container, count) {
   for (var i = 0; i < count; i++) {
     var sparkle = document.createElement('div');
@@ -175,6 +175,7 @@ function createPopup(parent, amount, isLoss) {
   parent.appendChild(popup);
   setTimeout(function() { popup.remove(); }, 1000);
 }
+
 
 function updateLeads(targetLeads) {
   var leadNumber = document.getElementById('lead-number');
@@ -258,7 +259,7 @@ function animateNumber(element, start, target) {
   }
   requestAnimationFrame(step);
 }
-
+*/
 // ==================== UPDATE PROGRESS ====================
 window.updateProgress = function(panelNumber, direction) {
   var totalSteps = 9;
@@ -679,8 +680,8 @@ window.sendToZapier = function() {
     if (progressFill) progressFill.style.width = '100%';
     var progressNumber = document.querySelector('.progress-number');
     if (progressNumber) progressNumber.textContent = '9/9';;
-    var leadNumber = document.getElementById('lead-number');
-    if (leadNumber) leadNumber.textContent = '$' + currentLeads;
+    // var leadNumber = document.getElementById('lead-number');
+    // if (leadNumber) leadNumber.textContent = '$' + currentLeads;
     
     setTimeout(function() {
       var pipImg = document.querySelector('#old-site-pip img');
@@ -906,6 +907,7 @@ document.addEventListener('DOMContentLoaded', function() {
   }, 300);
 
   // Show lead counter from panel 6 onwards
+  /*
 setInterval(function() {
   var rightPanel = document.querySelector('.right-panel.active');
   var leadCounter = document.getElementById('lead-counter');
@@ -924,7 +926,7 @@ setInterval(function() {
     }
   }
 }, 300);
-
+*/
   
  // URL UPDATER - handles both tabs
 function updateSiteUrls() {
@@ -1025,8 +1027,9 @@ var progressFill = document.querySelector('.progress-fill');
 if (progressFill) progressFill.style.width = '0%';
 var progressNumber = document.querySelector('.progress-number');
 if (progressNumber) progressNumber.textContent = '0/9';
-var leadNumber = document.getElementById('lead-number');
-if (leadNumber) leadNumber.textContent = '$0';
+
+// var leadNumber = document.getElementById('lead-number');
+// if (leadNumber) leadNumber.textContent = '$0';
   
   initPanel3Button();
   
