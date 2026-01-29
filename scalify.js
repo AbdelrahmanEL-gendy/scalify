@@ -270,9 +270,8 @@ window.updateProgress = function(panelNumber, direction) {
   if (progressFill) progressFill.style.width = fillPercentage + '%';
   
   var progressNumber = document.querySelector('.progress-number');
-if (progressNumber) progressNumber.textContent = currentStep + '/9';  // ✅ THIS LINE
+if (progressNumber) progressNumber.textContent = currentStep + '/9';
   
-  }
   currentPercentage = currentStep;
 };
 
