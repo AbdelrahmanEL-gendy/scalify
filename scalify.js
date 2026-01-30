@@ -932,9 +932,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // Add inside your DOMContentLoaded:
 updateSiteUrls();
-setInterval(updateSiteUrls, 300);
-console.log('[URL Updater] Initialized');
-
+  
   // Show lead counter from panel 6 onwards
 setInterval(function() {
   var rightPanel = document.querySelector('.right-panel.active');
@@ -1396,6 +1394,9 @@ function syncUpsellStates() {
 // CONDITIONAL DOMAIN
 // =========================
 
+// =========================
+// CONDITIONAL DOMAIN - EVENT DRIVEN
+// =========================
 function initConditionalDomainUpsell() {
   var allUrls = document.querySelectorAll('.new-site-url');
   if (allUrls.length === 0) return;
@@ -1410,12 +1411,23 @@ function initConditionalDomainUpsell() {
     });
   }
   
-  check();
-  setInterval(check, 300);
+  check(); // Run once on init
+  // REMOVED: setInterval(check, 300);
 }
+
+// Expose check function so you can call it when needed
+window.updateDomainUpsell = function() {
+  var allUrls = document.querySelectorAll('.new-site-url');
+  allUrls.forEach(function(urlEl) {
+    if (window.userSkippedUrl || window.hasNoSite) {
+      urlEl.classList.remove('upsell-disabled');
+    } else {
+      urlEl.classList.add('upsell-disabled');
+    }
+  });
+};
 
 initUpsellClicks();
 initConditionalDomainUpsell();
-setInterval(syncUpsellStates, 300);
-
-  });
+// REMOVED: setInterval(syncUpsellStates, 300);
+});
