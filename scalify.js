@@ -261,7 +261,7 @@ function animateNumber(element, start, target) {
 
 // ==================== UPDATE PROGRESS ====================
 window.updateProgress = function(panelNumber, direction) {
-  var totalSteps = 9;
+  var totalSteps = 8;  // CHANGED FROM 9 TO 8 (9 checkpoints = 8 gaps)
   var currentStep = Math.min(panelNumber - 1, totalSteps);
   var fillPercentage = (currentStep / totalSteps) * 100;
   
