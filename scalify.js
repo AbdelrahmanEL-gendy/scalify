@@ -48,6 +48,17 @@ window.panelToStep || {
   '10': 8    // Right-panel-10 → PAY (checkpoint 9)
 };
 
+window.showStartCreatingButton = function () {
+  var button = document.getElementById('start-creating-button');
+  if (!button || button.classList.contains('visible')) return;
+
+  button.classList.add('visible');
+
+  if (typeof playBuildSound === 'function') {
+    playBuildSound();
+  }
+};
+
 // Load cached image from localStorage on page load
 (function() {
   var savedImage = localStorage.getItem('scalify_oldSiteImage');
@@ -400,22 +411,6 @@ function switchRightPanel(panelNumber) {
     nextRightPanel.classList.add('active');
   }
 }
-
-function initPanel3Button() {
-  setInterval(function() {
-    var panel3 = document.getElementById('right-panel-3');
-    var button = document.getElementById('start-creating-button');
-    if (panel3 && panel3.classList.contains('active') && button) {
-      if (!button.classList.contains('visible')) {
-        setTimeout(function() {
-          button.classList.add('visible');
-          playBuildSound();
-        }, 3000);
-      }
-    }
-  }, 500);
-}
-
 // ==================== PREVIEW UPDATE FUNCTIONS ====================
 
 function updateIndustryPreview() {
@@ -1112,7 +1107,6 @@ if (progressNumber) progressNumber.textContent = '0/9';
 var leadNumber = document.getElementById('lead-number');
 if (leadNumber) leadNumber.textContent = '$0';
   
-  initPanel3Button();
   
 // INDUSTRY SELECTION - CLEAN VERSION
   
