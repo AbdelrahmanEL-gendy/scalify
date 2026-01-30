@@ -1114,14 +1114,13 @@ if (leadNumber) leadNumber.textContent = '$0';
   
   initPanel3Button();
   
-// INDUSTRY SELECTION - DEBUG VERSION
+// INDUSTRY SELECTION - CLEAN VERSION
+  
 (function() {
   window.selectedIndustrySlug = null;
   
   function syncIndustrySelection() {
-    console.log('[Industry Sync] Running sync, selected slug:', window.selectedIndustrySlug);
     var cards = document.querySelectorAll('.industry-card');
-    console.log('[Industry Sync] Found', cards.length, 'cards');
     
     cards.forEach(function(card) {
       var cardSlug = card.getAttribute('data-slug');
@@ -1129,22 +1128,15 @@ if (leadNumber) leadNumber.textContent = '$0';
       
       if (shouldBeSelected) {
         card.classList.add('selected');
-        console.log('[Industry Sync] ✓ Selected:', cardSlug);
       } else {
         card.classList.remove('selected');
       }
     });
-    
-    // Check how many are selected after sync
-    var selectedCount = document.querySelectorAll('.industry-card.selected').length;
-    console.log('[Industry Sync] Cards with .selected class:', selectedCount);
   }
   
   document.addEventListener('click', function(e) {
     var card = e.target.closest('.industry-card');
     if (!card) return;
-    
-    console.log('[Industry Click] Clicked card:', card.getAttribute('data-slug'));
     
     window.selectedIndustrySlug = card.getAttribute('data-slug');
     syncIndustrySelection();
@@ -1164,26 +1156,33 @@ if (leadNumber) leadNumber.textContent = '$0';
     var nextBtn = document.querySelector('#right-panel-4 .next-btn');
     if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
     if (typeof playBuildSound === 'function') playBuildSound();
+    
+    // AUTO-SWITCH TO NEW SITE TAB
+    setTimeout(function() {
+      var newSiteTab = document.querySelector('[data-w-tab="tabs-new-site"]');
+      
+      if (newSiteTab) {
+        newSiteTab.click();
+      } else {
+        var tabs = document.querySelectorAll('.w-tab-link');
+        if (tabs[1]) tabs[1].click();
+      }
+    }, 400);
+    
   });
   
-  // Sync on search/filter changes
   document.addEventListener('input', function(e) {
     if (e.target.matches('[data-jet-filter] input, .jetboost-search input, input[type="search"]')) {
-      console.log('[Industry Search] Search input changed');
       setTimeout(syncIndustrySelection, 100);
     }
   });
   
-  // Find the container - let's log what we find
   var container = document.querySelector('.industry-grid') || 
                   document.querySelector('[data-jet-filter-list]') || 
                   document.querySelector('.industry-cards-wrapper');
   
-  console.log('[Industry Init] Container found:', container);
-  
   if (container) {
     new MutationObserver(function(mutations) {
-      console.log('[Industry MutationObserver] DOM changed, syncing...');
       syncIndustrySelection();
     }).observe(container, {
       childList: true,
@@ -1191,11 +1190,8 @@ if (leadNumber) leadNumber.textContent = '$0';
       attributes: true,
       attributeFilter: ['style', 'class']
     });
-  } else {
-    console.warn('[Industry Init] ⚠️ No container found for MutationObserver');
   }
   
-  console.log('[Industry Init] Setup complete');
 })();
   
   // STYLE SELECTION
