@@ -261,21 +261,18 @@ function animateNumber(element, start, target) {
 
 // ==================== SHARED PANEL TO STEP MAPPING ====================
 // PUT THIS AT THE TOP, before updateProgress function
-window.panelToStep = {
-  // LEFT SIDE PANELS (content-panel)
-  '1': 0,    // Panel 1 → BUSINESS
-  '1b': 1,   // Panel 1b → SCAN
-  '2': 1,    // Panel 2 → SCAN (stays at same checkpoint)
-  '3': 1,    // Panel 3 → SCAN (STILL stays at same checkpoint)
-  
-  // RIGHT SIDE PANELS (right-panel)
-  '4': 2,    // Right-panel-4 → INDUSTRY
-  '5': 3,    // Right-panel-5 → PACKAGE
-  '6': 4,    // Right-panel-6 → SEO
-  '7': 5,    // Right-panel-7 → PREVIEW
-  '8': 6,    // Right-panel-8 → ACCOUNT
-  '9': 7,    // Right-panel-9 → CONTRACT
-  '10': 8    // Right-panel-10 → PAY
+window.panelToStep || {
+  '1': 0,    // Panel 1 → BUSINESS (checkpoint 1)
+  '1b': 0,   // Panel 1b → BUSINESS (stays at checkpoint 1) ← CHANGED FROM 1 TO 0
+  '2': 1,    // Panel 2 → SCAN (checkpoint 2)
+  '3': 1,    // Panel 3 → SCAN (stays at checkpoint 2)
+  '4': 2,    // Right-panel-4 → INDUSTRY (checkpoint 3)
+  '5': 3,    // Right-panel-5 → PACKAGE (checkpoint 4)
+  '6': 4,    // Right-panel-6 → SEO (checkpoint 5)
+  '7': 5,    // Right-panel-7 → PREVIEW (checkpoint 6)
+  '8': 6,    // Right-panel-8 → ACCOUNT (checkpoint 7)
+  '9': 7,    // Right-panel-9 → CONTRACT (checkpoint 8)
+  '10': 8    // Right-panel-10 → PAY (checkpoint 9)
 };
 // ==================== UPDATE PROGRESS ====================
 // REPLACE your entire existing updateProgress function with this:
