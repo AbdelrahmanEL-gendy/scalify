@@ -277,9 +277,25 @@ function animateNumber(element, start, target) {
 
 
 // ==================== UPDATE PROGRESS ====================
-// REPLACE your entire existing updateProgress function with this:
 window.updateProgress = function(panelNumber, direction) {
   var totalSteps = 8;
+  
+  // Initialize panelToStep if it doesn't exist
+  if (!window.panelToStep) {
+    window.panelToStep = {
+      '1': 0,
+      '1b': 0,
+      '2': 1,
+      '3': 1,
+      '4': 2,
+      '5': 3,
+      '6': 4,
+      '7': 5,
+      '8': 6,
+      '9': 7,
+      '10': 8
+    };
+  }
   
   // USE THE MAPPING instead of panelNumber - 1
   var panelId = String(panelNumber);
@@ -307,7 +323,6 @@ window.updateProgress = function(panelNumber, direction) {
   }
   currentPercentage = currentStep;
 };
-
 // ==================== ROBOT & PANELS ====================
 
 var currentTypeInterval = null;
