@@ -1157,17 +1157,11 @@ if (leadNumber) leadNumber.textContent = '$0';
     if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
     if (typeof playBuildSound === 'function') playBuildSound();
     
-    // AUTO-SWITCH TO NEW SITE TAB
-    setTimeout(function() {
-      var newSiteTab = document.querySelector('[data-w-tab="tabs-new-site"]');
-      
-      if (newSiteTab) {
-        newSiteTab.click();
-      } else {
-        var tabs = document.querySelectorAll('.w-tab-link');
-        if (tabs[1]) tabs[1].click();
-      }
-    }, 400);
+   // AUTO-SWITCH TO NEW SITE TAB - SIMPLE
+setTimeout(function() {
+  var newSiteTab = document.getElementById('tabs-new-site');
+  if (newSiteTab) newSiteTab.click();
+}, 400);
     
   });
   
