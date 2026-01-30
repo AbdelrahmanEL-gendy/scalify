@@ -262,16 +262,16 @@ function animateNumber(element, start, target) {
 // ==================== SHARED PANEL TO STEP MAPPING ====================
 // PUT THIS AT THE TOP, before updateProgress function
 window.panelToStep = {
-  '1': 0,
-  '1b': 1,
-  '2': 2,
-  '3': 2,
-  '4': 3,
-  '5': 4,
-  '6': 5,
-  '7': 6,
-  '8': 7,
-  '9': 8
+  '1': 0,    // Panel 1 (Business) → Checkpoint 1
+  '1b': 1,   // Panel 1b (Google Search) → Checkpoint 2 (Scan)
+  '2': 1,    // Panel 2 (URL Scan) → Checkpoint 2 (Scan) ← CHANGED FROM 2 TO 1
+  '3': 2,    // Panel 3 (Industry) → Checkpoint 3 (Industry)
+  '4': 3,    // Panel 4 (Package) → Checkpoint 4
+  '5': 4,    // Panel 5 (SEO) → Checkpoint 5
+  '6': 5,    // Panel 6 (Preview) → Checkpoint 6
+  '7': 6,    // Panel 7 (Account) → Checkpoint 7
+  '8': 7,    // Panel 8 (Contract) → Checkpoint 8
+  '9': 8     // Panel 9 (Pay) → Checkpoint 9
 };
 
 // ==================== UPDATE PROGRESS ====================
