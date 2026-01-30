@@ -259,10 +259,35 @@ function animateNumber(element, start, target) {
   requestAnimationFrame(step);
 }
 
+// ==================== SHARED PANEL TO STEP MAPPING ====================
+// PUT THIS AT THE TOP, before updateProgress function
+window.panelToStep = {
+  '1': 0,
+  '1b': 1,
+  '2': 2,
+  '3': 2,
+  '4': 3,
+  '5': 4,
+  '6': 5,
+  '7': 6,
+  '8': 7,
+  '9': 8
+};
+
 // ==================== UPDATE PROGRESS ====================
+// REPLACE your entire existing updateProgress function with this:
 window.updateProgress = function(panelNumber, direction) {
-  var totalSteps = 8;  // CHANGED FROM 9 TO 8 (9 checkpoints = 8 gaps)
-  var currentStep = Math.min(panelNumber - 1, totalSteps);
+  var totalSteps = 8;
+  
+  // USE THE MAPPING instead of panelNumber - 1
+  var panelId = String(panelNumber);
+  var currentStep = window.panelToStep[panelId];
+  
+  // Fallback if not in mapping
+  if (currentStep === undefined) {
+    currentStep = Math.min(panelNumber - 1, totalSteps);
+  }
+  
   var fillPercentage = (currentStep / totalSteps) * 100;
   
   var progressFill = document.querySelector('.progress-fill');
