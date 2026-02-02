@@ -525,31 +525,36 @@ window.sendToZapier = function() {
 };
 
 // ==================== MEMBERSTACK AUTH HANDLER ====================
-
-function initMemberstackAuth() {
+(function() { 
+  window.isLoggedInUser = false;
+  
+  var checkMemberstack = setInterval(function() {
+    if (window.$memberstackDom) {
+      clearInterval(checkMemberstack);
+      initMemberstackAuth();
+    }
+  }, 100);
+  
+  function initMemberstackAuth() {
     var loadingScreen = document.getElementById('auth-loading');
     
     window.$memberstackDom.getCurrentMember().then(function(result) {
       var member = result.data;
       if (member) {
-        // LOGGED IN - SHOW LOADING SCREEN
         console.log('User already logged in:', member);
         window.isLoggedInUser = true;
         
-        // Hide panel 1 and mockup immediately
         var panel1 = document.getElementById('panel-1');
         if (panel1) panel1.style.display = 'none';
         var mockup = document.querySelector('.website-mockup');
         if (mockup) mockup.style.display = 'none';
         
-        // Show loading screen
         if (loadingScreen) loadingScreen.style.display = 'flex';
         
         showLoggedInState(member);
         loadSavedSite(member);
         forceToPanel9();
         
-        // Hide loading after 1.5 seconds
         setTimeout(function() {
           if (loadingScreen) {
             loadingScreen.classList.add('hidden');
@@ -560,11 +565,9 @@ function initMemberstackAuth() {
         }, 1500);
         
       } else {
-        // NOT logged in - just show normal start screen (do nothing)
         console.log('New user - showing start screen');
       }
     }).catch(function(error) {
-      // Error - show normal start screen (do nothing)
       console.log('Auth error - showing start screen');
     });
     
@@ -684,18 +687,15 @@ function initMemberstackAuth() {
       }
     }, 1000);
   }
-})(); 
   
   function forceToPanel9() {
     console.log('=== FORCING TO PANEL 9 ===');
     
-    // Hide step indicator
     var stepIndicator = document.querySelector('.step-indicator');
     if (stepIndicator) stepIndicator.style.display = 'none';
 
-     // Hide website mockup - ADD THIS
-  var mockup = document.querySelector('.website-mockup');
-  if (mockup) mockup.style.display = 'none';
+    var mockup = document.querySelector('.website-mockup');
+    if (mockup) mockup.style.display = 'none';
     
     var splash = document.getElementById('splash-screen');
     if (splash) splash.classList.add('hidden');
@@ -716,14 +716,13 @@ function initMemberstackAuth() {
       panel9.style.transform = 'translateY(0)';
     }
 
-      // SWITCH TO NEW SITE TAB - ADD THIS
-  setTimeout(function() {
-    var newSiteTab = document.getElementById('tabs-new-site');
-    if (newSiteTab) {
-      console.log('Switching to new site tab');
-      newSiteTab.click();
-    }
-  }, 100);
+    setTimeout(function() {
+      var newSiteTab = document.getElementById('tabs-new-site');
+      if (newSiteTab) {
+        console.log('Switching to new site tab');
+        newSiteTab.click();
+      }
+    }, 100);
     
     var splineContainer = document.querySelector('.spline-container');
     var speechBubble = document.querySelector('.speech-bubble');
@@ -749,7 +748,7 @@ function initMemberstackAuth() {
     var progressFill = document.querySelector('.progress-fill');
     if (progressFill) progressFill.style.width = '100%';
     var progressNumber = document.querySelector('.progress-number');
-    if (progressNumber) progressNumber.textContent = '9/9';;
+    if (progressNumber) progressNumber.textContent = '9/9';
     var leadNumber = document.getElementById('lead-number');
     if (leadNumber) leadNumber.textContent = '$' + currentLeads;
     
@@ -766,6 +765,8 @@ function initMemberstackAuth() {
       }
     }, 500);
   }
+  
+})(); 
   
   function showLoggedInState(member) {
     var name = member.customFields?.name || member.auth?.email?.split('@')[0] || 'User';
