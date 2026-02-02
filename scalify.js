@@ -537,26 +537,46 @@ window.sendToZapier = function() {
   }, 100);
   
   function initMemberstackAuth() {
+  function initMemberstackAuth() {
+  var loadingScreen = document.getElementById('auth-loading');
+  
   window.$memberstackDom.getCurrentMember().then(function(result) {
     var member = result.data;
     if (member) {
+      // LOGGED IN - SHOW LOADING SCREEN
       console.log('User already logged in:', member);
       window.isLoggedInUser = true;
       
-      // HIDE HERO PANEL IMMEDIATELY - ADD THIS
+      // Hide panel 1 and mockup immediately
       var panel1 = document.getElementById('panel-1');
-      if (panel1) panel1.classList.remove('active');
-      
-      // Hide mockup too
+      if (panel1) panel1.style.display = 'none';
       var mockup = document.querySelector('.website-mockup');
       if (mockup) mockup.style.display = 'none';
       
+      // Show loading screen
+      if (loadingScreen) loadingScreen.style.display = 'flex';
+      
       showLoggedInState(member);
       loadSavedSite(member);
+      forceToPanel9();
       
-      // Can even reduce this to 0 now
-      setTimeout(forceToPanel9, 0);
+      // Hide loading after 1.5 seconds
+      setTimeout(function() {
+        if (loadingScreen) {
+          loadingScreen.classList.add('hidden');
+          setTimeout(function() {
+            loadingScreen.style.display = 'none';
+          }, 500);
+        }
+      }, 1500);
+      
+    } else {
+      // NOT logged in - just show normal start screen (do nothing)
+      console.log('New user - showing start screen');
     }
+  }).catch(function(error) {
+    // Error - show normal start screen (do nothing)
+    console.log('Auth error - showing start screen');
   });
     
     setTimeout(function() {
