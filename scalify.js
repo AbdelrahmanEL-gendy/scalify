@@ -1,4 +1,4 @@
-// ==================== SCALIFY.JS ====================
+// =================== SCALIFY.JS ===================
 // Host on GitHub, serve via jsDelivr CDN
 
 var currentPercentage = 0;
