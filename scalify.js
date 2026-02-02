@@ -765,9 +765,7 @@ window.sendToZapier = function() {
       }
     }, 500);
   }
-  
-})(); 
-  
+    
   function showLoggedInState(member) {
     var name = member.customFields?.name || member.auth?.email?.split('@')[0] || 'User';
     var email = member.auth?.email || '';
