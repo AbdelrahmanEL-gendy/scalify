@@ -540,13 +540,16 @@ window.sendToZapier = function() {
     window.$memberstackDom.getCurrentMember().then(function(result) {
       var member = result.data;
       if (member) {
-        console.log('User already logged in:', member);
-        window.isLoggedInUser = true;
-        showLoggedInState(member);
-        loadSavedSite(member);
-        setTimeout(forceToPanel9, 500);
-      }
-    });
+      console.log('User already logged in:', member);
+      window.isLoggedInUser = true;
+      
+      showLoggedInState(member);
+      loadSavedSite(member);
+      
+      // DO EVERYTHING IMMEDIATELY, NO DELAY
+      forceToPanel9();
+    }
+  });
     
     setTimeout(function() {
       var signupForm = document.querySelector('[data-ms-form="signup"]');
@@ -694,6 +697,15 @@ window.sendToZapier = function() {
       panel9.style.opacity = '1';
       panel9.style.transform = 'translateY(0)';
     }
+
+      // SWITCH TO NEW SITE TAB - ADD THIS
+  setTimeout(function() {
+    var newSiteTab = document.getElementById('tabs-new-site');
+    if (newSiteTab) {
+      console.log('Switching to new site tab');
+      newSiteTab.click();
+    }
+  }, 100);
     
     var splineContainer = document.querySelector('.spline-container');
     var speechBubble = document.querySelector('.speech-bubble');
