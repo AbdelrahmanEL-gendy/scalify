@@ -671,6 +671,10 @@ window.sendToZapier = function() {
     // Hide step indicator
     var stepIndicator = document.querySelector('.step-indicator');
     if (stepIndicator) stepIndicator.style.display = 'none';
+
+     // Hide website mockup - ADD THIS
+  var mockup = document.querySelector('.website-mockup');
+  if (mockup) mockup.style.display = 'none';
     
     var splash = document.getElementById('splash-screen');
     if (splash) splash.classList.add('hidden');
