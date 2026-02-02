@@ -537,17 +537,25 @@ window.sendToZapier = function() {
   }, 100);
   
   function initMemberstackAuth() {
-    window.$memberstackDom.getCurrentMember().then(function(result) {
-      var member = result.data;
-      if (member) {
+  window.$memberstackDom.getCurrentMember().then(function(result) {
+    var member = result.data;
+    if (member) {
       console.log('User already logged in:', member);
       window.isLoggedInUser = true;
+      
+      // HIDE HERO PANEL IMMEDIATELY - ADD THIS
+      var panel1 = document.getElementById('panel-1');
+      if (panel1) panel1.classList.remove('active');
+      
+      // Hide mockup too
+      var mockup = document.querySelector('.website-mockup');
+      if (mockup) mockup.style.display = 'none';
       
       showLoggedInState(member);
       loadSavedSite(member);
       
-      // DO EVERYTHING IMMEDIATELY, NO DELAY
-      forceToPanel9();
+      // Can even reduce this to 0 now
+      setTimeout(forceToPanel9, 0);
     }
   });
     
