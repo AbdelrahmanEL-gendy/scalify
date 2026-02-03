@@ -724,6 +724,12 @@ window.sendToZapier = function() {
       }
     }, 100);
     
+    // Hide tooltips
+  var tooltips = document.getElementById('Industry-tooltips');
+  if (tooltips) {
+    tooltips.style.display = 'none';
+  }
+    
     var splineContainer = document.querySelector('.spline-container');
     var speechBubble = document.querySelector('.speech-bubble');
     var rightContent = document.querySelector('.right-content');
