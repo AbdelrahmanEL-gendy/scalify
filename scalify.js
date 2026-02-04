@@ -755,16 +755,25 @@ window.sendToZapier = function() {
       pipWindow.style.visibility = 'visible';
     }
     
-    currentPanelNumber = 9;
-    currentPercentage = 7;
-    currentLeads = panelLeads[10] || 500;
-    
-    var progressFill = document.querySelector('.progress-fill');
-    if (progressFill) progressFill.style.width = '100%';
-    var progressNumber = document.querySelector('.progress-number');
-    if (progressNumber) progressNumber.textContent = '9/9';
-    var leadNumber = document.getElementById('lead-number');
-    if (leadNumber) leadNumber.textContent = '$' + currentLeads;
+    // Set to panel 9 (Sign step)
+currentPanelNumber = 9;
+
+// Use updateProgress function instead of manual updates
+if (typeof window.updateProgress === 'function') {
+  window.updateProgress(9, 'forward');
+} else {
+  // Fallback if updateProgress doesn't exist
+  currentPercentage = 7;
+  var progressFill = document.querySelector('.progress-fill');
+  if (progressFill) progressFill.style.width = '87.5%';
+  var progressNumber = document.querySelector('.progress-number');
+  if (progressNumber) progressNumber.textContent = '8/9';
+}
+
+// Update leads
+currentLeads = panelLeads[9] || 500;
+var leadNumber = document.getElementById('lead-number');
+if (leadNumber) leadNumber.textContent = '$' + currentLeads;
     
     setTimeout(function() {
       var pipImg = document.querySelector('#old-site-pip img');
