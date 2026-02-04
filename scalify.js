@@ -748,7 +748,7 @@ window.sendToZapier = function() {
     }
     
     currentPanelNumber = 9;
-    currentPercentage = 8;
+    currentPercentage = 7;
     currentLeads = panelLeads[10] || 500;
     
     var progressFill = document.querySelector('.progress-fill');
