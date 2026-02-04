@@ -289,9 +289,12 @@ function animateNumber(element, start, target) {
 
 // ==================== UPDATE PROGRESS ====================
 window.updateProgress = function(panelNumber, direction) {
+  console.log('====== UPDATE PROGRESS CALLED ======');
+  console.log('Panel Number:', panelNumber);
+  console.log('Direction:', direction);
+  
   var totalSteps = 8;
   
-  // Initialize panelToStep if it doesn't exist
   if (!window.panelToStep) {
     window.panelToStep = {
       '1': 0,
@@ -308,16 +311,21 @@ window.updateProgress = function(panelNumber, direction) {
     };
   }
   
-  // USE THE MAPPING instead of panelNumber - 1
   var panelId = String(panelNumber);
   var currentStep = window.panelToStep[panelId];
   
-  // Fallback if not in mapping
+  console.log('Panel ID:', panelId);
+  console.log('Current Step from mapping:', currentStep);
+  
   if (currentStep === undefined) {
     currentStep = Math.min(panelNumber - 1, totalSteps);
+    console.log('Using fallback step:', currentStep);
   }
   
   var fillPercentage = (currentStep / totalSteps) * 100;
+  
+  console.log('Fill Percentage:', fillPercentage + '%');
+  console.log('====================================');
   
   var progressFill = document.querySelector('.progress-fill');
   if (progressFill) progressFill.style.width = fillPercentage + '%';
