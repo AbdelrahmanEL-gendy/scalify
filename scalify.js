@@ -154,41 +154,17 @@ function playCashSound() {
   }, 200);
 }
 // Helper function for cleaning business names to URLs
+// Helper function for cleaning business names
 function sanitizeBusinessNameToUrl(businessName) {
   var cleaned = businessName
     .toLowerCase()
-    .replace(/\s+/g, '') // Remove all spaces first
-    
-    // Remove ALL instances of business-related words
-    .replace(/therapy/g, '')
-    .replace(/aba/g, '')
-    .replace(/services/g, '')
-    .replace(/clinic/g, '')
-    .replace(/center/g, '')
-    .replace(/healthcare/g, '')
-    .replace(/medical/g, '')
-    .replace(/inc/g, '')
-    .replace(/llc/g, '')
-    .replace(/ltd/g, '')
-    .replace(/corp/g, '')
-    
-    // Remove ALL instances of US state names
-    .replace(/northcarolina/g, '')
-    .replace(/southcarolina/g, '')
-    .replace(/carolina/g, '')
-    .replace(/newyork/g, '')
-    .replace(/california/g, '')
-    .replace(/texas/g, '')
-    .replace(/florida/g, '')
-    .replace(/pennsylvania/g, '')
-    .replace(/newjersey/g, '')
-    
-    // Remove all non-alphanumeric
+    .replace(/\s+/g, '')
+    .replace(/(in|at|of|for|near|by)[a-z]+$/i, '')
+    .replace(/(northcarolina|southcarolina|newyork|california|texas|florida|pennsylvania|newjersey|virginia|georgia|massachusetts|carolina|inc|llc|ltd|corp|corporation|company|co|group|therapy|aba|clinic|center|services)$/i, '')
     .replace(/[^a-z0-9]/g, '');
   
-  // Truncate to 15 chars
-  if (cleaned.length > 15) {
-    cleaned = cleaned.substring(0, 15);
+  if (cleaned.length > 20) {
+    cleaned = cleaned.substring(0, 20);
   }
   
   return cleaned + '.com';
