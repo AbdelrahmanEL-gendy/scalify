@@ -927,24 +927,33 @@ window.sendToZapier = function() {
   };
   
   setTimeout(function() {
-    var settingsToggle = document.getElementById('settings-toggle');
+    var userIndicator = document.getElementById('user-indicator');
     var settingsDropdown = document.getElementById('settings-dropdown');
-    var logoutBtn = document.getElementById('settings-logout');
-    if (settingsToggle && settingsDropdown) {
-      settingsToggle.addEventListener('click', function(e) {
+    var logoutBtn = document.getElementById('logout-btn'); // CHANGED from 'settings-logout'
+    
+    // Make entire user indicator clickable
+    if (userIndicator && settingsDropdown) {
+      userIndicator.addEventListener('click', function(e) {
         e.preventDefault();
         e.stopPropagation();
         settingsDropdown.classList.toggle('active');
       });
+      
+      // Close dropdown when clicking outside
       document.addEventListener('click', function(e) {
-        if (!e.target.closest('.user-settings')) settingsDropdown.classList.remove('active');
+        if (!userIndicator.contains(e.target)) { // CHANGED from .user-settings
+          settingsDropdown.classList.remove('active');
+        }
       });
     }
     
+    // Logout button handler
     if (logoutBtn) {
       logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
+        e.stopPropagation(); // ADDED - prevents dropdown from toggling
         if (settingsDropdown) settingsDropdown.classList.remove('active');
+        
         if (confirm('Are you sure you want to log out?')) {
           // Clear localStorage
           localStorage.removeItem('scalify_oldSiteImage');
