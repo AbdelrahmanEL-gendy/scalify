@@ -153,7 +153,46 @@ function playCashSound() {
     ching.stop(audioContext.currentTime + 0.2);
   }, 200);
 }
-
+// Helper function for cleaning business names to URLs
+function sanitizeBusinessNameToUrl(businessName) {
+  var cleaned = businessName
+    .toLowerCase()
+    .replace(/\s+/g, '') // Remove all spaces first
+    
+    // Remove ALL instances of business-related words
+    .replace(/therapy/g, '')
+    .replace(/aba/g, '')
+    .replace(/services/g, '')
+    .replace(/clinic/g, '')
+    .replace(/center/g, '')
+    .replace(/healthcare/g, '')
+    .replace(/medical/g, '')
+    .replace(/inc/g, '')
+    .replace(/llc/g, '')
+    .replace(/ltd/g, '')
+    .replace(/corp/g, '')
+    
+    // Remove ALL instances of US state names
+    .replace(/northcarolina/g, '')
+    .replace(/southcarolina/g, '')
+    .replace(/carolina/g, '')
+    .replace(/newyork/g, '')
+    .replace(/california/g, '')
+    .replace(/texas/g, '')
+    .replace(/florida/g, '')
+    .replace(/pennsylvania/g, '')
+    .replace(/newjersey/g, '')
+    
+    // Remove all non-alphanumeric
+    .replace(/[^a-z0-9]/g, '');
+  
+  // Truncate to 15 chars
+  if (cleaned.length > 15) {
+    cleaned = cleaned.substring(0, 15);
+  }
+  
+  return cleaned + '.com';
+}
 function playBuildSound() {
   if (!audioContext) return;
   var oscillator = audioContext.createOscillator();
@@ -1032,10 +1071,8 @@ setInterval(function() {
 
   
  // ==========================================
-// FIXED URL UPDATER - with debugging
-// Replace your existing updateSiteUrls() function with this
+// FIXED URL UPDATER - with sanitizeBusinessNameToUrl
 // ==========================================
-
 function updateSiteUrls() {
   var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
   var businessName = (window.siteConfig && window.siteConfig.businessName) || 
@@ -1053,9 +1090,9 @@ function updateSiteUrls() {
     var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
     displayUrl = 'https://www.' + cleanUrl;
   } else if (businessName) {
-    // User skipped OR no URL yet - show businessname.com with https://www.
-    var cleanName = businessName.toLowerCase().replace(/[^a-z0-9]/g, '');
-    displayUrl = 'https://www.' + cleanName + '.com';
+    // User skipped OR no URL yet - use smart sanitizer
+    var cleanName = sanitizeBusinessNameToUrl(businessName);
+    displayUrl = 'https://www.' + cleanName;
   } else {
     // No data at all
     displayUrl = 'your-new-website.com';
@@ -1093,10 +1130,8 @@ function updateSiteUrls() {
     el.textContent = displayUrl;
   });
 }
-
 // Make it global
 window.updateSiteUrls = updateSiteUrls;
-
   
   // BACK BUTTONS
   document.querySelectorAll('.back-btn').forEach(function(btn) {
