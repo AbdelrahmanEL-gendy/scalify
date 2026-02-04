@@ -747,8 +747,8 @@ window.sendToZapier = function() {
       pipWindow.style.visibility = 'visible';
     }
     
-    currentPanelNumber = 10;
-    currentPercentage = 9;
+    currentPanelNumber = 9;
+    currentPercentage = 8;
     currentLeads = panelLeads[10] || 500;
     
     var progressFill = document.querySelector('.progress-fill');
