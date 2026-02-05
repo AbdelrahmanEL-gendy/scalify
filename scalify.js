@@ -1163,10 +1163,18 @@ initAudio();
 setTimeout(function() { window.showRobotMessage('panel-1'); }, 500);
   
   window.addEventListener('keydown', function(e) {
-    var tagName = document.activeElement.tagName.toLowerCase();
-    if (tagName === 'input' || tagName === 'textarea') return;
-    if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) e.preventDefault();
-  });
+  // NEW: Stop here if the screen is tablet size or smaller (<= 991px)
+  // This allows the keys to work normally on smaller screens.
+  if (window.innerWidth <= 991) return;
+
+  var tagName = document.activeElement.tagName.toLowerCase();
+  if (tagName === 'input' || tagName === 'textarea') return;
+
+  // KeyCodes: 32=Space, 33=PgUp, 34=PgDn, 35=End, 36=Home, 37=Left, 38=Up, 39=Right, 40=Down
+  if ([32, 33, 34, 35, 36, 37, 38, 39, 40].includes(e.keyCode)) {
+    e.preventDefault();
+  }
+});
   
  // Hide progress bar on start
 var progressWrapper = document.querySelector('.progress-wrapper');
