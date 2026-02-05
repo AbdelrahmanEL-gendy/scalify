@@ -397,7 +397,7 @@ function scaleRobot(panelNumber) {
   var speechBubble = document.querySelector('.speech-bubble');
   var rightContent = document.querySelector('.right-content');
   
-  if (panelNumber >= 4) {
+  if (panelNumber >= 3) {
     if (splineContainer) splineContainer.classList.add('hidden');
     if (speechBubble) speechBubble.classList.add('hidden');
     if (rightContent) rightContent.classList.add('expanded');
