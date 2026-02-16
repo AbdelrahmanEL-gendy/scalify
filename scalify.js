@@ -1059,7 +1059,27 @@ function updateSiteUrls() {
   console.log('[URL Updater] scannedUrl:', scannedUrl);
   console.log('[URL Updater] businessName:', businessName);
   
+  // ADD THESE DEBUG LINES:
+  console.log('[URL Updater] localStorage scalify_scannedUrl:', localStorage.getItem('scalify_scannedUrl'));
+  console.log('[URL Updater] window.scannedUrl:', window.scannedUrl);
+  console.log('[URL Updater] window.siteConfig:', window.siteConfig);
+  
   var displayUrl;
+  
+  if (scannedUrl && scannedUrl !== 'skipped') {
+    var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+    displayUrl = 'https://www.' + cleanUrl;
+    console.log('[URL Updater] Using scannedUrl path, displayUrl:', displayUrl); // ADD THIS
+  } else if (businessName) {
+    var cleanName = sanitizeBusinessNameToUrl(businessName);
+    displayUrl = 'https://www.' + cleanName;
+    console.log('[URL Updater] Using businessName path, displayUrl:', displayUrl); // ADD THIS
+  } else {
+    displayUrl = 'your-new-website.com';
+    console.log('[URL Updater] Using fallback path, displayUrl:', displayUrl); // ADD THIS
+  }
+  
+  console.log('[URL Updater] FINAL displayUrl:', displayUrl);
   
   if (scannedUrl && scannedUrl !== 'skipped') {
     // User entered a URL - show their actual site with https://www.
