@@ -1058,45 +1058,32 @@ function updateSiteUrls() {
   console.log('[URL Updater] Running...');
   console.log('[URL Updater] scannedUrl:', scannedUrl);
   console.log('[URL Updater] businessName:', businessName);
-  
-  // ADD THESE DEBUG LINES:
   console.log('[URL Updater] localStorage scalify_scannedUrl:', localStorage.getItem('scalify_scannedUrl'));
   console.log('[URL Updater] window.scannedUrl:', window.scannedUrl);
   console.log('[URL Updater] window.siteConfig:', window.siteConfig);
   
   var displayUrl;
   
+  // ONLY SET displayUrl ONCE - NO DUPLICATE LOGIC
   if (scannedUrl && scannedUrl !== 'skipped') {
+    // User scanned a URL - use it!
     var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
     displayUrl = 'https://www.' + cleanUrl;
-    console.log('[URL Updater] Using scannedUrl path, displayUrl:', displayUrl); // ADD THIS
+    console.log('[URL Updater] Using scannedUrl path, displayUrl:', displayUrl);
   } else if (businessName) {
+    // User skipped - generate from business name
     var cleanName = sanitizeBusinessNameToUrl(businessName);
     displayUrl = 'https://www.' + cleanName;
-    console.log('[URL Updater] Using businessName path, displayUrl:', displayUrl); // ADD THIS
+    console.log('[URL Updater] Using businessName path, displayUrl:', displayUrl);
   } else {
+    // No data at all
     displayUrl = 'your-new-website.com';
-    console.log('[URL Updater] Using fallback path, displayUrl:', displayUrl); // ADD THIS
+    console.log('[URL Updater] Using fallback path, displayUrl:', displayUrl);
   }
   
   console.log('[URL Updater] FINAL displayUrl:', displayUrl);
   
-  if (scannedUrl && scannedUrl !== 'skipped') {
-    // User entered a URL - show their actual site with https://www.
-    var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
-    displayUrl = 'https://www.' + cleanUrl;
-  } else if (businessName) {
-    // User skipped OR no URL yet - use smart sanitizer
-    var cleanName = sanitizeBusinessNameToUrl(businessName);
-    displayUrl = 'https://www.' + cleanName;
-  } else {
-    // No data at all
-    displayUrl = 'your-new-website.com';
-  }
-  
-  console.log('[URL Updater] displayUrl:', displayUrl);
-  
-  // Try BY ID first (for single instances)
+  // Update DOM elements BY ID
   var newSiteUrlById = document.getElementById('new-site-url');
   if (newSiteUrlById) {
     console.log('[URL Updater] ✓ Found #new-site-url by ID');
@@ -1113,7 +1100,7 @@ function updateSiteUrls() {
     console.warn('[URL Updater] ✗ Could not find #old-site-url by ID');
   }
   
-  // ALSO try BY CLASS (for multiple instances/components)
+  // Update DOM elements BY CLASS
   var newSiteUrlsByClass = document.querySelectorAll('.new-site-url');
   console.log('[URL Updater] Found', newSiteUrlsByClass.length, 'elements with class .new-site-url');
   newSiteUrlsByClass.forEach(function(el) {
