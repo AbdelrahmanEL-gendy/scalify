@@ -711,12 +711,11 @@ window.sendToZapier = function() {
     }, 1000);
   }
   
-  function forceToPanel9() {
-    console.log('=== FORCING TO PANEL 9 ===');
+ function forceToPanel9() {
+    console.log('=== FORCING TO PANEL ===');
     
     var stepIndicator = document.querySelector('.step-indicator');
     if (stepIndicator) stepIndicator.style.display = 'none';
-
     var mockup = document.querySelector('.website-mockup');
     if (mockup) mockup.style.display = 'none';
     
@@ -732,13 +731,29 @@ window.sendToZapier = function() {
     document.querySelectorAll('.right-panel').forEach(function(p) {
       p.classList.remove('active');
     });
-    var panel9 = document.getElementById('right-panel-9');
-    if (panel9) {
-      panel9.classList.add('active');
-      panel9.style.opacity = '1';
-      panel9.style.transform = 'translateY(0)';
+    
+    var contractSigned = localStorage.getItem('scalify_contractSigned') === 'true';
+    
+    if (contractSigned) {
+      console.log('Contract already signed - going to panel 10');
+      var panel10 = document.getElementById('right-panel-10');
+      if (panel10) {
+        panel10.classList.add('active');
+        panel10.style.opacity = '1';
+        panel10.style.transform = 'translateY(0)';
+      }
+      currentPanelNumber = 10;
+    } else {
+      console.log('Contract not signed - going to panel 9');
+      var panel9 = document.getElementById('right-panel-9');
+      if (panel9) {
+        panel9.classList.add('active');
+        panel9.style.opacity = '1';
+        panel9.style.transform = 'translateY(0)';
+      }
+      currentPanelNumber = 9;
     }
-
+    
     setTimeout(function() {
       var newSiteTab = document.getElementById('tabs-new-site');
       if (newSiteTab) {
@@ -748,10 +763,10 @@ window.sendToZapier = function() {
     }, 100);
     
     // Hide tooltips
-  var tooltips = document.getElementById('Industry-tooltips');
-  if (tooltips) {
-    tooltips.style.display = 'none';
-  }
+    var tooltips = document.getElementById('Industry-tooltips');
+    if (tooltips) {
+      tooltips.style.display = 'none';
+    }
     
     var splineContainer = document.querySelector('.spline-container');
     var speechBubble = document.querySelector('.speech-bubble');
@@ -769,9 +784,7 @@ window.sendToZapier = function() {
       pipWindow.style.opacity = '1';
       pipWindow.style.visibility = 'visible';
     }
-    
-    // Set to panel 9 (Sign step)
-currentPanelNumber = 9;
+}
 
 // Use updateProgress function instead of manual updates
 if (typeof window.updateProgress === 'function') {
