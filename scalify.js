@@ -762,7 +762,6 @@ window.sendToZapier = function() {
       }
     }, 100);
     
-    // Hide tooltips
     var tooltips = document.getElementById('Industry-tooltips');
     if (tooltips) {
       tooltips.style.display = 'none';
