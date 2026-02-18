@@ -849,7 +849,7 @@ window.sendToZapier = function() {
     });
   }
     
-  function loadSavedSite(member) {
+ function loadSavedSite(member) {
     var savedSite = member.customFields?.['saved-site'];
     if (!savedSite) {
       console.log('No saved site found');
@@ -869,6 +869,11 @@ window.sendToZapier = function() {
         var apiKey = 'VjNKeFlX';
         window.screenshotUrl = 'https://api.screenshotone.com/take?url=' + encodeURIComponent(config.scannedUrl) + '&viewport_width=1280&viewport_height=800&format=png&block_ads=true&block_trackers=true&cache=true&cache_ttl=86400&access_key=' + apiKey;
         window.cachedOldSiteImage = window.screenshotUrl;
+      }
+      
+      // Update URLs now that scannedUrl is set
+      if (typeof window.updateSiteUrls === 'function') {
+        setTimeout(window.updateSiteUrls, 200);
       }
       
       function applyPreview() {
@@ -1062,69 +1067,31 @@ setInterval(function() {
 // ==========================================
 function updateSiteUrls() {
   var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
-  var businessName = (window.siteConfig && window.siteConfig.businessName) || 
-                     localStorage.getItem('scalify_businessName') || 
-                     null;
   
   console.log('[URL Updater] Running...');
   console.log('[URL Updater] scannedUrl:', scannedUrl);
-  console.log('[URL Updater] businessName:', businessName);
-  console.log('[URL Updater] localStorage scalify_scannedUrl:', localStorage.getItem('scalify_scannedUrl'));
-  console.log('[URL Updater] window.scannedUrl:', window.scannedUrl);
-  console.log('[URL Updater] window.siteConfig:', window.siteConfig);
   
   var displayUrl;
   
-  // ONLY SET displayUrl ONCE - NO DUPLICATE LOGIC
   if (scannedUrl && scannedUrl !== 'skipped') {
-    // User scanned a URL - use it!
     var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
     displayUrl = 'https://www.' + cleanUrl;
-    console.log('[URL Updater] Using scannedUrl path, displayUrl:', displayUrl);
-  } else if (businessName) {
-    // User skipped - generate from business name
-    var cleanName = sanitizeBusinessNameToUrl(businessName);
-    displayUrl = 'https://www.' + cleanName;
-    console.log('[URL Updater] Using businessName path, displayUrl:', displayUrl);
   } else {
-    // No data at all
-    displayUrl = 'your-new-website.com';
-    console.log('[URL Updater] Using fallback path, displayUrl:', displayUrl);
+    displayUrl = 'https://www.your-new-website.com';
   }
   
   console.log('[URL Updater] FINAL displayUrl:', displayUrl);
   
-  // Update DOM elements BY ID
   var newSiteUrlById = document.getElementById('new-site-url');
   if (newSiteUrlById) {
-    console.log('[URL Updater] ✓ Found #new-site-url by ID');
     newSiteUrlById.textContent = displayUrl;
-  } else {
-    console.warn('[URL Updater] ✗ Could not find #new-site-url by ID');
   }
   
-  var oldSiteUrlById = document.getElementById('old-site-url');
-  if (oldSiteUrlById) {
-    console.log('[URL Updater] ✓ Found #old-site-url by ID');
-    oldSiteUrlById.textContent = displayUrl;
-  } else {
-    console.warn('[URL Updater] ✗ Could not find #old-site-url by ID');
-  }
-  
-  // Update DOM elements BY CLASS
   var newSiteUrlsByClass = document.querySelectorAll('.new-site-url');
-  console.log('[URL Updater] Found', newSiteUrlsByClass.length, 'elements with class .new-site-url');
   newSiteUrlsByClass.forEach(function(el) {
     el.textContent = displayUrl;
   });
-  
-  var oldSiteUrlsByClass = document.querySelectorAll('.old-site-url');
-  console.log('[URL Updater] Found', oldSiteUrlsByClass.length, 'elements with class .old-site-url');
-  oldSiteUrlsByClass.forEach(function(el) {
-    el.textContent = displayUrl;
-  });
 }
-// Make it global
 window.updateSiteUrls = updateSiteUrls;
   
   // BACK BUTTONS
