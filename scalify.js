@@ -783,24 +783,21 @@ window.sendToZapier = function() {
       pipWindow.style.opacity = '1';
       pipWindow.style.visibility = 'visible';
     }
-}
-
-// Use updateProgress function instead of manual updates
-if (typeof window.updateProgress === 'function') {
-  window.updateProgress(9, 'forward');
-} else {
-  // Fallback if updateProgress doesn't exist
-  currentPercentage = 7;
-  var progressFill = document.querySelector('.progress-fill');
-  if (progressFill) progressFill.style.width = '87.5%';
-  var progressNumber = document.querySelector('.progress-number');
-  if (progressNumber) progressNumber.textContent = '8/9';
-}
-
-// Update leads
-currentLeads = panelLeads[9] || 500;
-var leadNumber = document.getElementById('lead-number');
-if (leadNumber) leadNumber.textContent = '$' + currentLeads;
+    
+    // Update progress
+    if (typeof window.updateProgress === 'function') {
+      window.updateProgress(currentPanelNumber, 'forward');
+    } else {
+      var progressFill = document.querySelector('.progress-fill');
+      if (progressFill) progressFill.style.width = contractSigned ? '100%' : '87.5%';
+      var progressNumber = document.querySelector('.progress-number');
+      if (progressNumber) progressNumber.textContent = contractSigned ? '9/9' : '8/9';
+    }
+    
+    // Update leads
+    currentLeads = panelLeads[9] || 500;
+    var leadNumber = document.getElementById('lead-number');
+    if (leadNumber) leadNumber.textContent = '$' + currentLeads;
     
     setTimeout(function() {
       var pipImg = document.querySelector('#old-site-pip img');
@@ -814,40 +811,6 @@ if (leadNumber) leadNumber.textContent = '$' + currentLeads;
         console.log('PIP image set from cache');
       }
     }, 500);
-  }
-    
-  function showLoggedInState(member) {
-    var name = member.customFields?.name || member.auth?.email?.split('@')[0] || 'User';
-    var email = member.auth?.email || '';
-    var userIndicator = document.getElementById('user-indicator');
-    var userName = document.getElementById('user-name');
-    if (userIndicator && userName) {
-      userName.textContent = name;
-      userIndicator.classList.add('active');
-    }
-    var orderUserName = document.getElementById('order-user-name');
-    if (orderUserName) orderUserName.textContent = name;
-    var orderUserEmail = document.getElementById('order-user-email');
-    if (orderUserEmail) orderUserEmail.textContent = email;
-  }
-  
-  function saveSiteToMember() {
-    if (!window.siteConfig) return;
-    var siteData = {
-      scannedUrl: window.scannedUrl || '',
-      industry: window.siteConfig.industry || null,
-      style: window.siteConfig.style || null,
-      colors: window.siteConfig.colors || null,
-      createdAt: new Date().toISOString(),
-      status: 'pending'
-    };
-    window.$memberstackDom.updateMember({
-      customFields: { 'saved-site': JSON.stringify(siteData) }
-    }).then(function() {
-      console.log('Site config saved to member:', siteData);
-    }).catch(function(err) {
-      console.error('Failed to save site config:', err);
-    });
   }
   
   function loadSavedSite(member) {
