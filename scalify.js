@@ -812,7 +812,43 @@ window.sendToZapier = function() {
       }
     }, 500);
   }
+
+  // ADD THIS after forceToPanel9's closing }
   
+  function showLoggedInState(member) {
+    var name = member.customFields?.name || member.auth?.email?.split('@')[0] || 'User';
+    var email = member.auth?.email || '';
+    var userIndicator = document.getElementById('user-indicator');
+    var userName = document.getElementById('user-name');
+    if (userIndicator && userName) {
+      userName.textContent = name;
+      userIndicator.classList.add('active');
+    }
+    var orderUserName = document.getElementById('order-user-name');
+    if (orderUserName) orderUserName.textContent = name;
+    var orderUserEmail = document.getElementById('order-user-email');
+    if (orderUserEmail) orderUserEmail.textContent = email;
+  }
+  
+  function saveSiteToMember() {
+    if (!window.siteConfig) return;
+    var siteData = {
+      scannedUrl: window.scannedUrl || '',
+      industry: window.siteConfig.industry || null,
+      style: window.siteConfig.style || null,
+      colors: window.siteConfig.colors || null,
+      createdAt: new Date().toISOString(),
+      status: 'pending'
+    };
+    window.$memberstackDom.updateMember({
+      customFields: { 'saved-site': JSON.stringify(siteData) }
+    }).then(function() {
+      console.log('Site config saved to member:', siteData);
+    }).catch(function(err) {
+      console.error('Failed to save site config:', err);
+    });
+  }
+    
   function loadSavedSite(member) {
     var savedSite = member.customFields?.['saved-site'];
     if (!savedSite) {
