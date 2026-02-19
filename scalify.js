@@ -1074,7 +1074,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('[URL Updater] displayUrl:', displayUrl);
     
-    var newSiteUrlById = document.getElementById('new-site-url');
+var newSiteUrlById = document.getElementById('new-site-url-new');
     if (newSiteUrlById) {
       newSiteUrlById.textContent = displayUrl;
     }
