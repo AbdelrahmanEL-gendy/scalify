@@ -1020,10 +1020,9 @@ window.sendToZapier = function() {
 })();
 
 // ==================== DOM CONTENT LOADED ====================
-
 document.addEventListener('DOMContentLoaded', function() {
   window.siteConfig = { industry: null, style: null, colors: null };
-
+  
   // Show progress bar on all panels except panel-1
   setInterval(function() {
     var panel1 = document.getElementById('panel-1');
@@ -1037,62 +1036,58 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     }
   }, 300);
-
-  // Add inside your DOMContentLoaded:
-updateSiteUrls();
   
   // Show lead counter from panel 6 onwards
-setInterval(function() {
-  var rightPanel = document.querySelector('.right-panel.active');
-  var leadCounter = document.getElementById('lead-counter');
-  var rightPanelNum = 0;
-  
-  if (rightPanel && rightPanel.id) {
-    var match = rightPanel.id.match(/right-panel-(\d+)/);
-    if (match) rightPanelNum = parseInt(match[1]);
-  }
-  
-  if (leadCounter) {
-    if (rightPanelNum >= 6) {
-      leadCounter.classList.add('visible');
-    } else {
-      leadCounter.classList.remove('visible');
+  setInterval(function() {
+    var rightPanel = document.querySelector('.right-panel.active');
+    var leadCounter = document.getElementById('lead-counter');
+    var rightPanelNum = 0;
+    
+    if (rightPanel && rightPanel.id) {
+      var match = rightPanel.id.match(/right-panel-(\d+)/);
+      if (match) rightPanelNum = parseInt(match[1]);
     }
+    
+    if (leadCounter) {
+      if (rightPanelNum >= 6) {
+        leadCounter.classList.add('visible');
+      } else {
+        leadCounter.classList.remove('visible');
+      }
+    }
+  }, 300);
+  
+  // ==========================================
+  // URL UPDATER - event-driven
+  // ==========================================
+  function updateSiteUrls() {
+    var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
+    
+    var displayUrl;
+    
+    if (scannedUrl && scannedUrl !== 'skipped') {
+      var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
+      displayUrl = 'https://www.' + cleanUrl;
+    } else {
+      displayUrl = 'https://www.your-new-website.com';
+    }
+    
+    console.log('[URL Updater] displayUrl:', displayUrl);
+    
+    var newSiteUrlById = document.getElementById('new-site-url');
+    if (newSiteUrlById) {
+      newSiteUrlById.textContent = displayUrl;
+    }
+    
+    var newSiteUrlsByClass = document.querySelectorAll('.new-site-url');
+    newSiteUrlsByClass.forEach(function(el) {
+      el.textContent = displayUrl;
+    });
   }
-}, 300);
-
+  window.updateSiteUrls = updateSiteUrls;
   
- // ==========================================
-// FIXED URL UPDATER - with sanitizeBusinessNameToUrl
-// ==========================================
-function updateSiteUrls() {
-  var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl');
-  
-  console.log('[URL Updater] Running...');
-  console.log('[URL Updater] scannedUrl:', scannedUrl);
-  
-  var displayUrl;
-  
-  if (scannedUrl && scannedUrl !== 'skipped') {
-    var cleanUrl = scannedUrl.replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/$/, '');
-    displayUrl = 'https://www.' + cleanUrl;
-  } else {
-    displayUrl = 'https://www.your-new-website.com';
-  }
-  
-  console.log('[URL Updater] FINAL displayUrl:', displayUrl);
-  
-  var newSiteUrlById = document.getElementById('new-site-url');
-  if (newSiteUrlById) {
-    newSiteUrlById.textContent = displayUrl;
-  }
-  
-  var newSiteUrlsByClass = document.querySelectorAll('.new-site-url');
-  newSiteUrlsByClass.forEach(function(el) {
-    el.textContent = displayUrl;
-  });
-}
-window.updateSiteUrls = updateSiteUrls;
+  // Listen for scan/skip events from scanning embed
+  window.addEventListener('scalify:urlScanned', updateSiteUrls);
   
   // BACK BUTTONS
   document.querySelectorAll('.back-btn').forEach(function(btn) {
