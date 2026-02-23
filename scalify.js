@@ -474,42 +474,48 @@ function updateIndustryPreview() {
 // Restore industry on page load for logged-in users only
 function restoreIndustrySelection() {
   if (!window.$memberstackDom) return;
-
   window.$memberstackDom.getCurrentMember().then(function(result) {
     if (!result || !result.data) return;
-
     try {
       var saved = localStorage.getItem('scalify_selectedIndustry');
       if (!saved) return;
-
       var industry = JSON.parse(saved);
       if (!industry || !industry.slug) return;
-
       if (!window.siteConfig) window.siteConfig = {};
       window.siteConfig.industry = industry;
       window.selectedIndustrySlug = industry.slug;
-
       updateIndustryPreview();
-
+      
+      function forceTemplateImage() {
+        var img = document.getElementById('template-5k');
+        if (img && industry.template5k) {
+          img.removeAttribute('srcset');
+          img.removeAttribute('sizes');
+          img.src = industry.template5k;
+        }
+      }
+      
+      forceTemplateImage();
+      setTimeout(forceTemplateImage, 500);
+      setTimeout(forceTemplateImage, 1000);
+      setTimeout(forceTemplateImage, 2500);
+      
       var cards = document.querySelectorAll('.industry-card');
       cards.forEach(function(card) {
         if (card.getAttribute('data-slug') === industry.slug) {
           card.classList.add('selected');
         }
       });
-
       console.log('[Industry] Restored selection:', industry.slug);
     } catch (e) {}
   });
 }
-
 // Run restore when DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', restoreIndustrySelection);
 } else {
   restoreIndustrySelection();
 }
-
 function updateStylePreview() {
   var style = window.siteConfig.style;
   if (!style) return;
