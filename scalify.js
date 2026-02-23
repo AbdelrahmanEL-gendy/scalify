@@ -426,7 +426,6 @@ function switchRightPanel(panelNumber) {
 // ==================== PREVIEW UPDATE FUNCTIONS ====================
 function preloadAndSet(imgElement, newSrc) {
   if (!imgElement || !newSrc) return;
-  // Hide current image while loading new one
   var preload = new Image();
   preload.onload = function() {
     imgElement.src = newSrc;
@@ -458,39 +457,48 @@ function updateIndustryPreview() {
   preloadAndSet(img10k, industry.template10k);
   preloadAndSet(img50k, industry.template50k);
 
-  // Persist for logged-in users
-  try {
-    localStorage.setItem('scalify_selectedIndustry', JSON.stringify(industry));
-  } catch (e) {}
-}
-
-// Restore industry on page load for logged-in users
-function restoreIndustrySelection() {
-  try {
-    var saved = localStorage.getItem('scalify_selectedIndustry');
-    if (!saved) return;
-
-    var industry = JSON.parse(saved);
-    if (!industry || !industry.slug) return;
-
-    // Restore to siteConfig
-    if (!window.siteConfig) window.siteConfig = {};
-    window.siteConfig.industry = industry;
-    window.selectedIndustrySlug = industry.slug;
-
-    // Update the preview with preloaded images
-    updateIndustryPreview();
-
-    // Re-select the card visually
-    var cards = document.querySelectorAll('.industry-card');
-    cards.forEach(function(card) {
-      if (card.getAttribute('data-slug') === industry.slug) {
-        card.classList.add('selected');
+  // Persist for logged-in users only
+  if (window.$memberstackDom) {
+    window.$memberstackDom.getCurrentMember().then(function(result) {
+      if (result && result.data) {
+        try {
+          localStorage.setItem('scalify_selectedIndustry', JSON.stringify(industry));
+        } catch (e) {}
       }
     });
+  }
+}
 
-    console.log('[Industry] Restored selection:', industry.slug);
-  } catch (e) {}
+// Restore industry on page load for logged-in users only
+function restoreIndustrySelection() {
+  if (!window.$memberstackDom) return;
+
+  window.$memberstackDom.getCurrentMember().then(function(result) {
+    if (!result || !result.data) return;
+
+    try {
+      var saved = localStorage.getItem('scalify_selectedIndustry');
+      if (!saved) return;
+
+      var industry = JSON.parse(saved);
+      if (!industry || !industry.slug) return;
+
+      if (!window.siteConfig) window.siteConfig = {};
+      window.siteConfig.industry = industry;
+      window.selectedIndustrySlug = industry.slug;
+
+      updateIndustryPreview();
+
+      var cards = document.querySelectorAll('.industry-card');
+      cards.forEach(function(card) {
+        if (card.getAttribute('data-slug') === industry.slug) {
+          card.classList.add('selected');
+        }
+      });
+
+      console.log('[Industry] Restored selection:', industry.slug);
+    } catch (e) {}
+  });
 }
 
 // Run restore when DOM is ready
