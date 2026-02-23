@@ -428,6 +428,8 @@ function preloadAndSet(imgElement, newSrc) {
   if (!imgElement || !newSrc) return;
   var preload = new Image();
   preload.onload = function() {
+    imgElement.removeAttribute('srcset');
+    imgElement.removeAttribute('sizes');
     imgElement.src = newSrc;
   };
   preload.src = newSrc;
