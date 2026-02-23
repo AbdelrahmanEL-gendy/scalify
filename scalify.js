@@ -424,10 +424,20 @@ function switchRightPanel(panelNumber) {
   }
 }
 // ==================== PREVIEW UPDATE FUNCTIONS ====================
+function preloadAndSet(imgElement, newSrc) {
+  if (!imgElement || !newSrc) return;
+  // Hide current image while loading new one
+  var preload = new Image();
+  preload.onload = function() {
+    imgElement.src = newSrc;
+  };
+  preload.src = newSrc;
+}
 
 function updateIndustryPreview() {
   var industry = window.siteConfig.industry;
   if (!industry) return;
+
   var headline = document.getElementById('preview-headline');
   var description = document.getElementById('preview-description');
   var cta = document.getElementById('preview-cta');
@@ -436,15 +446,58 @@ function updateIndustryPreview() {
   var img5k = document.getElementById('template-5k');
   var img10k = document.getElementById('template-10k');
   var img50k = document.getElementById('template-50k');
-  
+
   if (headline && industry.headline) headline.innerHTML = industry.headline;
   if (description && industry.description) description.innerHTML = industry.description;
   if (cta && industry.cta) cta.innerHTML = industry.cta;
   if (navCta && industry.cta) navCta.innerHTML = industry.cta;
-  if (image && industry.image) image.src = industry.image;
-  if (img5k && industry.template5k) img5k.src = industry.template5k;
-  if (img10k && industry.template10k) img10k.src = industry.template10k;
-  if (img50k && industry.template50k) img50k.src = industry.template50k;
+
+  // Preload all images before swapping
+  preloadAndSet(image, industry.image);
+  preloadAndSet(img5k, industry.template5k);
+  preloadAndSet(img10k, industry.template10k);
+  preloadAndSet(img50k, industry.template50k);
+
+  // Persist for logged-in users
+  try {
+    localStorage.setItem('scalify_selectedIndustry', JSON.stringify(industry));
+  } catch (e) {}
+}
+
+// Restore industry on page load for logged-in users
+function restoreIndustrySelection() {
+  try {
+    var saved = localStorage.getItem('scalify_selectedIndustry');
+    if (!saved) return;
+
+    var industry = JSON.parse(saved);
+    if (!industry || !industry.slug) return;
+
+    // Restore to siteConfig
+    if (!window.siteConfig) window.siteConfig = {};
+    window.siteConfig.industry = industry;
+    window.selectedIndustrySlug = industry.slug;
+
+    // Update the preview with preloaded images
+    updateIndustryPreview();
+
+    // Re-select the card visually
+    var cards = document.querySelectorAll('.industry-card');
+    cards.forEach(function(card) {
+      if (card.getAttribute('data-slug') === industry.slug) {
+        card.classList.add('selected');
+      }
+    });
+
+    console.log('[Industry] Restored selection:', industry.slug);
+  } catch (e) {}
+}
+
+// Run restore when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', restoreIndustrySelection);
+} else {
+  restoreIndustrySelection();
 }
 
 function updateStylePreview() {
