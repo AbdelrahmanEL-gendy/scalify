@@ -48,17 +48,6 @@ window.panelToStep || {
   '10': 8    // Right-panel-10 → PAY (checkpoint 9)
 };
 
-window.showStartCreatingButton = function () {
-  var button = document.getElementById('start-creating-button');
-  if (!button || button.classList.contains('visible')) return;
-
-  button.classList.add('visible');
-
-  if (typeof playBuildSound === 'function') {
-    playBuildSound();
-  }
-};
-
 // Load cached image from localStorage on page load
 (function() {
   var savedImage = localStorage.getItem('scalify_oldSiteImage');
