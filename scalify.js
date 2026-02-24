@@ -583,10 +583,9 @@ function loadOldSiteScreenshot() {
   }
 }
 
-// Zapier Function
+// ZAPIER FUNCTION
 
 (function() {
-
   var ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/6690142/u0ytuah/';
   var signupSent = false;
 
@@ -594,20 +593,40 @@ function loadOldSiteScreenshot() {
     var email = '';
     var name = '';
     var phone = '';
+    var companyName = '';
 
-    var emailInput = document.getElementById('Email');
+    // Try form inputs first
+    var emailInput = document.getElementById('Email') || document.querySelector('input[type="email"]');
     var nameInput = document.getElementById('Name') || document.querySelector('input[name="name"]');
-    var phoneInput = document.getElementById('Phone') || document.querySelector('input[name="phone"]');
+    var phoneInput = document.getElementById('Phone') || document.querySelector('input[type="tel"]');
+    var companyInput = document.querySelector('input[data-ms-member="Company Name"], input[name="Company Name"]');
 
-    if (emailInput) email = emailInput.value.trim();
-    if (nameInput) name = nameInput.value.trim();
-    if (phoneInput) phone = phoneInput.value.trim();
+    if (emailInput && emailInput.value) email = emailInput.value.trim();
+    if (nameInput && nameInput.value) name = nameInput.value.trim();
+    if (phoneInput && phoneInput.value) phone = phoneInput.value.trim();
+    if (companyInput && companyInput.value) companyName = companyInput.value.trim();
 
+    // Fallback: localStorage email
+    if (!email) email = localStorage.getItem('scalify_paymentEmail') || '';
+
+    // Industry from saved localStorage or siteConfig
     var industryName = '';
-    if (window.selectedIndustry) {
+    try {
+      var savedIndustry = JSON.parse(localStorage.getItem('scalify_selectedIndustry'));
+      if (savedIndustry) {
+        industryName = savedIndustry.name || savedIndustry.slug || savedIndustry.headline || '';
+      }
+    } catch(e) {}
+
+    if (!industryName && window.siteConfig && window.siteConfig.industry) {
+      industryName = window.siteConfig.industry.name || window.siteConfig.industry.slug || '';
+    }
+
+    if (!industryName && window.selectedIndustry) {
       industryName = window.selectedIndustry.name || window.selectedIndustry.industry || '';
     }
 
+    // Cart / Tier
     var tier = '';
     var price = '';
     if (window.cart) {
@@ -615,8 +634,10 @@ function loadOldSiteScreenshot() {
       price = window.cart.price || '';
     }
 
-    var businessName = localStorage.getItem('scalify_businessName') || '';
+    // Business name
+    var businessName = '';
     if (window.businessData && window.businessData.name) businessName = window.businessData.name;
+    if (!businessName) businessName = localStorage.getItem('scalify_businessName') || '';
 
     var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl') || '';
     if (scannedUrl === 'skipped') scannedUrl = 'No existing website';
@@ -625,6 +646,7 @@ function loadOldSiteScreenshot() {
       email: email,
       name: name,
       phone: phone,
+      company_name: companyName,
       business_name: businessName,
       industry: industryName,
       tier: tier,
@@ -649,9 +671,27 @@ function loadOldSiteScreenshot() {
   document.addEventListener('memberstack:authenticated', function() {
     if (localStorage.getItem('scalify_signupSent') === 'true') return;
     setTimeout(function() {
-      var data = gatherUserData();
-      if (data.email) sendToZapier(data);
-    }, 1000);
+      if (window.$memberstackDom) {
+        window.$memberstackDom.getCurrentMember().then(function(payload) {
+          var data = gatherUserData();
+          if (payload && payload.data) {
+            if (payload.data.auth) data.email = payload.data.auth.email || data.email;
+            if (payload.data.customFields) {
+              data.name = payload.data.customFields['Name'] || data.name;
+              data.phone = payload.data.customFields['Phone'] || data.phone;
+              data.company_name = payload.data.customFields['Company Name'] || data.company_name;
+            }
+          }
+          if (data.email) sendToZapier(data);
+        }).catch(function() {
+          var data = gatherUserData();
+          if (data.email) sendToZapier(data);
+        });
+      } else {
+        var data = gatherUserData();
+        if (data.email) sendToZapier(data);
+      }
+    }, 2000);
   });
 
   var rp9 = document.getElementById('right-panel-9');
@@ -661,8 +701,23 @@ function loadOldSiteScreenshot() {
         if (mutation.target.id === 'right-panel-9' && !mutation.target.classList.contains('active')) {
           if (localStorage.getItem('scalify_signupSent') === 'true') return;
           setTimeout(function() {
-            var data = gatherUserData();
-            if (data.email) sendToZapier(data);
+            if (window.$memberstackDom) {
+              window.$memberstackDom.getCurrentMember().then(function(payload) {
+                var data = gatherUserData();
+                if (payload && payload.data) {
+                  if (payload.data.auth) data.email = payload.data.auth.email || data.email;
+                  if (payload.data.customFields) {
+                    data.name = payload.data.customFields['Name'] || data.name;
+                    data.phone = payload.data.customFields['Phone'] || data.phone;
+                    data.company_name = payload.data.customFields['Company Name'] || data.company_name;
+                  }
+                }
+                if (data.email) sendToZapier(data);
+              }).catch(function() {
+                var data = gatherUserData();
+                if (data.email) sendToZapier(data);
+              });
+            }
           }, 2000);
         }
       });
@@ -673,7 +728,6 @@ function loadOldSiteScreenshot() {
     localStorage.removeItem('scalify_signupSent');
     signupSent = false;
   });
-
 })();
 
 // ==================== MEMBERSTACK AUTH HANDLER ====================
