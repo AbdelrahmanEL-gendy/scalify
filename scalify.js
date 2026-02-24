@@ -583,27 +583,98 @@ function loadOldSiteScreenshot() {
   }
 }
 
-window.sendToZapier = function() {
-  var webhookUrl = 'https://hooks.zapier.com/hooks/catch/6690142/uw1xsk9/';
-  var data = {
-    oldSiteUrl: window.scannedUrl || '',
-    industry: window.siteConfig.industry ? window.siteConfig.industry.slug : '',
-    industryHeadline: window.siteConfig.industry ? window.siteConfig.industry.headline : '',
-    industryDescription: window.siteConfig.industry ? window.siteConfig.industry.description : '',
-    industryCta: window.siteConfig.industry ? window.siteConfig.industry.cta : '',
-    style: window.siteConfig.style ? window.siteConfig.style.slug : '',
-    fontClass: window.siteConfig.style ? window.siteConfig.style.fontClass : '',
-    borderRadius: window.siteConfig.style ? window.siteConfig.style.radius : '',
-    buttonRadius: window.siteConfig.style ? window.siteConfig.style.buttonRadius : '',
-    colorScheme: window.siteConfig.colors ? window.siteConfig.colors.slug : '',
-    primaryColor: window.siteConfig.colors ? window.siteConfig.colors.primary : '',
-    secondaryColor: window.siteConfig.colors ? window.siteConfig.colors.secondary : '',
-    accentColor: window.siteConfig.colors ? window.siteConfig.colors.accent : '',
-    timestamp: new Date().toISOString()
+// Zapier Function
+
+(function() {
+
+  var ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/6690142/u0ytuah/';
+  var signupSent = false;
+
+  function gatherUserData() {
+    var email = '';
+    var name = '';
+    var phone = '';
+
+    var emailInput = document.getElementById('Email');
+    var nameInput = document.getElementById('Name') || document.querySelector('input[name="name"]');
+    var phoneInput = document.getElementById('Phone') || document.querySelector('input[name="phone"]');
+
+    if (emailInput) email = emailInput.value.trim();
+    if (nameInput) name = nameInput.value.trim();
+    if (phoneInput) phone = phoneInput.value.trim();
+
+    var industryName = '';
+    if (window.selectedIndustry) {
+      industryName = window.selectedIndustry.name || window.selectedIndustry.industry || '';
+    }
+
+    var tier = '';
+    var price = '';
+    if (window.cart) {
+      tier = window.cart.tier || '';
+      price = window.cart.price || '';
+    }
+
+    var businessName = localStorage.getItem('scalify_businessName') || '';
+    if (window.businessData && window.businessData.name) businessName = window.businessData.name;
+
+    var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl') || '';
+    if (scannedUrl === 'skipped') scannedUrl = 'No existing website';
+
+    return {
+      email: email,
+      name: name,
+      phone: phone,
+      business_name: businessName,
+      industry: industryName,
+      tier: tier,
+      price: price,
+      old_site_url: scannedUrl,
+      signup_date: new Date().toISOString()
+    };
+  }
+
+  function sendToZapier(data) {
+    if (signupSent) return;
+    signupSent = true;
+    fetch(ZAPIER_WEBHOOK, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+    try { localStorage.setItem('scalify_signupSent', 'true'); } catch(e) {}
+  }
+
+  window.sendToZapier = function() {
+    signupSent = false;
+    sendToZapier(gatherUserData());
   };
-  fetch(webhookUrl, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-  console.log('Sent to Zapier:', data);
-};
+
+  document.addEventListener('memberstack:authenticated', function() {
+    if (localStorage.getItem('scalify_signupSent') === 'true') return;
+    setTimeout(function() {
+      var data = gatherUserData();
+      if (data.email) sendToZapier(data);
+    }, 1000);
+  });
+
+  var rp9 = document.getElementById('right-panel-9');
+  if (rp9) {
+    new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.target.id === 'right-panel-9' && !mutation.target.classList.contains('active')) {
+          if (localStorage.getItem('scalify_signupSent') === 'true') return;
+          setTimeout(function() {
+            var data = gatherUserData();
+            if (data.email) sendToZapier(data);
+          }, 2000);
+        }
+      });
+    }).observe(rp9, { attributes: true, attributeFilter: ['class'] });
+  }
+
+  window.addEventListener('memberstack:logout', function() {
+    localStorage.removeItem('scalify_signupSent');
+    signupSent = false;
+  });
+
+})();
 
 // ==================== MEMBERSTACK AUTH HANDLER ====================
 (function() { 
