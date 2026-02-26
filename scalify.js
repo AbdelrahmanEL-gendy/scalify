@@ -1464,7 +1464,7 @@ setTimeout(function() {
         window.siteConfig.industry.template5k = newTemplateUrl;
 
         // Update the preview image (adjust selector to match yours)
-        var previewImg = document.querySelector('.template-preview img, #template-5k-img');
+        var previewImg = document.getElementById('template-5k');
         if (previewImg) previewImg.src = newTemplateUrl;
       }
     }
