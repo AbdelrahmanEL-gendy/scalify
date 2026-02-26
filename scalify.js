@@ -1377,15 +1377,21 @@ if (leadNumber) leadNumber.textContent = '$0';
     syncIndustrySelection();
     
     window.siteConfig.industry = {
-      slug: card.getAttribute('data-slug'),
-      headline: card.getAttribute('data-headline'),
-      description: card.getAttribute('data-description'),
-      cta: card.getAttribute('data-cta'),
-      image: card.getAttribute('data-image'),
-      template5k: card.getAttribute('data-template-5k'),
-      template10k: card.getAttribute('data-template-10k'),
-      template50k: card.getAttribute('data-template-50k')
-    };
+  slug: card.getAttribute('data-slug'),
+  headline: card.getAttribute('data-headline'),
+  description: card.getAttribute('data-description'),
+  cta: card.getAttribute('data-cta'),
+  image: card.getAttribute('data-image'),
+  template5k: card.getAttribute('data-template-5k'),
+  template10k: card.getAttribute('data-template-10k'),
+  template50k: card.getAttribute('data-template-50k'),
+  // New style templates
+  styleCorporate: card.getAttribute('data-style-corporate'),
+  stylePlayful: card.getAttribute('data-style-playful'),
+  styleLuxury: card.getAttribute('data-style-luxury'),
+  styleMinimal: card.getAttribute('data-style-minimal'),
+  styleBold: card.getAttribute('data-style-bold')
+};
     
     updateIndustryPreview();
     var nextBtn = document.querySelector('#right-panel-4 .next-btn');
@@ -1424,23 +1430,48 @@ setTimeout(function() {
 })();
   
   // STYLE SELECTION
-  document.querySelectorAll('.style-card').forEach(function(card) {
-    card.addEventListener('click', function() {
-      document.querySelectorAll('.style-card').forEach(function(c) { c.classList.remove('selected'); });
-      this.classList.add('selected');
-      window.siteConfig.style = {
-        slug: this.getAttribute('data-slug'),
-        fontClass: this.getAttribute('data-font-class'),
-        radius: this.getAttribute('data-radius'),
-        buttonRadius: this.getAttribute('data-button-radius'),
-        shadow: this.getAttribute('data-shadow')
-      };
-      updateStylePreview();
-      var nextBtn = document.querySelector('#right-panel-5 .next-btn');
-      if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
-      playBuildSound();
+  (function() {
+  window.selectedStyle = null;
+
+  var styleMap = {
+    'corporate': 'styleCorporate',
+    'playful': 'stylePlayful',
+    'luxury': 'styleLuxury',
+    'minimal': 'styleMinimal',
+    'bold': 'styleBold'
+  };
+
+  document.addEventListener('click', function(e) {
+    var card = e.target.closest('[data-style]');
+    if (!card) return;
+
+    var style = card.getAttribute('data-style');
+    window.selectedStyle = style;
+
+    // Update selected state on cards
+    document.querySelectorAll('[data-style]').forEach(function(c) {
+      c.classList.remove('selected');
     });
+    card.classList.add('selected');
+
+    // Swap the template-5k image to the selected style
+    if (window.siteConfig && window.siteConfig.industry) {
+      var fieldName = styleMap[style];
+      var newTemplateUrl = window.siteConfig.industry[fieldName];
+
+      if (newTemplateUrl) {
+        // Update the stored template5k
+        window.siteConfig.industry.template5k = newTemplateUrl;
+
+        // Update the preview image (adjust selector to match yours)
+        var previewImg = document.querySelector('.template-preview img, #template-5k-img');
+        if (previewImg) previewImg.src = newTemplateUrl;
+      }
+    }
+
+    if (typeof playBuildSound === 'function') playBuildSound();
   });
+})();
   
   // COLOR SELECTION
   document.querySelectorAll('.color-card').forEach(function(card) {
