@@ -689,6 +689,7 @@ function loadOldSiteScreenshot() {
   }
 
   document.addEventListener('memberstack:authenticated', function() {
+    if (window._zapierSentDirect) return; 
     setTimeout(handleMemberstackData, 2000);
   });
 
@@ -812,18 +813,20 @@ function loadOldSiteScreenshot() {
   'phone': (document.getElementById('Phone') ? document.getElementById('Phone').value : '')
 }
           }).then(function(result) {
-            console.log('Signup successful:', result);
-            var member = result.data.member;
-            window.isLoggedInUser = true;
-            showLoggedInState(member);
-            saveSiteToMember();
-            forceToPanel9();
-            
-            // Send to Zapier directly - we have all the data right here
+    console.log('Signup successful:', result);
+    var member = result.data.member;
+    window.isLoggedInUser = true;
+    window._zapierSentDirect = true;  // ADD THIS
+    showLoggedInState(member);
+    saveSiteToMember();
+    
+    // Send to Zapier BEFORE hiding the form
     if (typeof window.sendToZapierDirect === 'function') {
       window.sendToZapierDirect(email, name, phone, company);
     }
-          }).catch(function(error) {
+    
+    forceToPanel9();
+}).catch(function(error) {
             console.error('Signup error:', error);
             alert('Signup failed: ' + (error.message || 'Please try again'));
             if (submitBtn) {
