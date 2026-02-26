@@ -584,10 +584,8 @@ function loadOldSiteScreenshot() {
 }
 
 // ZAPIER FUNCTION
-
 (function() {
   var ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/6690142/u0ytuah/';
-  var signupSent = false;
 
   function gatherUserData() {
     var email = '';
@@ -595,21 +593,18 @@ function loadOldSiteScreenshot() {
     var phone = '';
     var companyName = '';
 
-    // Try form inputs first
     var emailInput = document.getElementById('Email') || document.querySelector('input[type="email"]');
     var nameInput = document.getElementById('Name') || document.querySelector('input[name="name"]');
     var phoneInput = document.getElementById('Phone') || document.querySelector('input[type="tel"]');
-    var companyInput = document.querySelector('input[data-ms-member="Company Name"], input[name="Company Name"]');
+    var companyInput = document.querySelector('input[data-ms-member="company-name"], input[name="Company Name"]');
 
     if (emailInput && emailInput.value) email = emailInput.value.trim();
     if (nameInput && nameInput.value) name = nameInput.value.trim();
     if (phoneInput && phoneInput.value) phone = phoneInput.value.trim();
     if (companyInput && companyInput.value) companyName = companyInput.value.trim();
 
-    // Fallback: localStorage email
     if (!email) email = localStorage.getItem('scalify_paymentEmail') || '';
 
-    // Industry from saved localStorage or siteConfig
     var industryName = '';
     try {
       var savedIndustry = JSON.parse(localStorage.getItem('scalify_selectedIndustry'));
@@ -626,7 +621,6 @@ function loadOldSiteScreenshot() {
       industryName = window.selectedIndustry.name || window.selectedIndustry.industry || '';
     }
 
-    // Cart / Tier
     var tier = '';
     var price = '';
     if (window.cart) {
@@ -634,7 +628,6 @@ function loadOldSiteScreenshot() {
       price = window.cart.price || '';
     }
 
-    // Business name
     var businessName = '';
     if (window.businessData && window.businessData.name) businessName = window.businessData.name;
     if (!businessName) businessName = localStorage.getItem('scalify_businessName') || '';
@@ -657,41 +650,37 @@ function loadOldSiteScreenshot() {
   }
 
   function sendToZapier(data) {
-    if (signupSent) return;
-    signupSent = true;
     fetch(ZAPIER_WEBHOOK, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
-    try { localStorage.setItem('scalify_signupSent', 'true'); } catch(e) {}
   }
 
   window.sendToZapier = function() {
-    signupSent = false;
     sendToZapier(gatherUserData());
   };
 
-  document.addEventListener('memberstack:authenticated', function() {
-    if (localStorage.getItem('scalify_signupSent') === 'true') return;
-    setTimeout(function() {
-      if (window.$memberstackDom) {
-        window.$memberstackDom.getCurrentMember().then(function(payload) {
-          var data = gatherUserData();
-          if (payload && payload.data) {
-            if (payload.data.auth) data.email = payload.data.auth.email || data.email;
-            if (payload.data.customFields) {
-              data.name = payload.data.customFields['name'] || data.name;
-data.phone = payload.data.customFields['phone'] || data.phone;
-data.company_name = payload.data.customFields['company-name'] || data.company_name;
-            }
-          }
-          if (data.email) sendToZapier(data);
-        }).catch(function() {
-          var data = gatherUserData();
-          if (data.email) sendToZapier(data);
-        });
-      } else {
-        var data = gatherUserData();
-        if (data.email) sendToZapier(data);
+  function handleMemberstackData() {
+    if (!window.$memberstackDom) return;
+    window.$memberstackDom.getCurrentMember().then(function(payload) {
+      if (!payload || !payload.data) return;
+      var memberId = payload.data.id;
+      var sentKey = 'scalify_signupSent_' + memberId;
+      if (localStorage.getItem(sentKey) === 'true') return;
+
+      var data = gatherUserData();
+      if (payload.data.auth) data.email = payload.data.auth.email || data.email;
+      if (payload.data.customFields) {
+        data.name = payload.data.customFields['name'] || data.name;
+        data.phone = payload.data.customFields['phone'] || data.phone;
+        data.company_name = payload.data.customFields['company-name'] || data.company_name;
       }
-    }, 2000);
+      if (data.email) {
+        sendToZapier(data);
+        localStorage.setItem(sentKey, 'true');
+      }
+    }).catch(function() {});
+  }
+
+  document.addEventListener('memberstack:authenticated', function() {
+    setTimeout(handleMemberstackData, 2000);
   });
 
   var rp9 = document.getElementById('right-panel-9');
@@ -699,34 +688,17 @@ data.company_name = payload.data.customFields['company-name'] || data.company_na
     new MutationObserver(function(mutations) {
       mutations.forEach(function(mutation) {
         if (mutation.target.id === 'right-panel-9' && !mutation.target.classList.contains('active')) {
-          if (localStorage.getItem('scalify_signupSent') === 'true') return;
-          setTimeout(function() {
-            if (window.$memberstackDom) {
-              window.$memberstackDom.getCurrentMember().then(function(payload) {
-                var data = gatherUserData();
-                if (payload && payload.data) {
-                  if (payload.data.auth) data.email = payload.data.auth.email || data.email;
-                  if (payload.data.customFields) {
-                    data.name = payload.data.customFields['Name'] || data.name;
-                    data.phone = payload.data.customFields['Phone'] || data.phone;
-                    data.company_name = payload.data.customFields['Company Name'] || data.company_name;
-                  }
-                }
-                if (data.email) sendToZapier(data);
-              }).catch(function() {
-                var data = gatherUserData();
-                if (data.email) sendToZapier(data);
-              });
-            }
-          }, 2000);
+          setTimeout(handleMemberstackData, 2000);
         }
       });
     }).observe(rp9, { attributes: true, attributeFilter: ['class'] });
   }
 
   window.addEventListener('memberstack:logout', function() {
-    localStorage.removeItem('scalify_signupSent');
-    signupSent = false;
+    var keys = Object.keys(localStorage);
+    keys.forEach(function(key) {
+      if (key.startsWith('scalify_signupSent_')) localStorage.removeItem(key);
+    });
   });
 })();
 
