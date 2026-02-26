@@ -824,7 +824,7 @@ function loadOldSiteScreenshot() {
           window.$memberstackDom.signupMemberEmailPassword({
             email: email,
             password: password,
-            customFields: { 'name': name, 'company-name': company }
+            customFields: { 'name': name, 'company-name': company, 'phone': phone }
           }).then(function(result) {
             console.log('Signup successful:', result);
             var member = result.data.member;
