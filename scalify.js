@@ -806,6 +806,7 @@ function loadOldSiteScreenshot() {
           var password = passwordInput ? passwordInput.value : '';
           var name = nameInput ? nameInput.value : '';
           var company = companyInput ? companyInput.value : '';
+          var phone = document.getElementById('Phone') ? document.getElementById('Phone').value : '';
           
           console.log('Signup data:', { email: email, name: name, company: company });
           
