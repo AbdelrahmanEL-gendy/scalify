@@ -677,9 +677,9 @@ function loadOldSiteScreenshot() {
           if (payload && payload.data) {
             if (payload.data.auth) data.email = payload.data.auth.email || data.email;
             if (payload.data.customFields) {
-              data.name = payload.data.customFields['Name'] || data.name;
-              data.phone = payload.data.customFields['Phone'] || data.phone;
-              data.company_name = payload.data.customFields['Company Name'] || data.company_name;
+              data.name = payload.data.customFields['name'] || data.name;
+data.phone = payload.data.customFields['phone'] || data.phone;
+data.company_name = payload.data.customFields['company-name'] || data.company_name;
             }
           }
           if (data.email) sendToZapier(data);
