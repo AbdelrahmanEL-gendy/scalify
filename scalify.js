@@ -657,6 +657,15 @@ function loadOldSiteScreenshot() {
     sendToZapier(gatherUserData());
   };
 
+   window.sendToZapierDirect = function(email, name, phone, company) {
+    var data = gatherUserData();
+    data.email = email || data.email;
+    data.name = name || data.name;
+    data.phone = phone || data.phone;
+    data.company_name = company || data.company_name;
+    sendToZapier(data);
+  };
+
   function handleMemberstackData() {
     if (!window.$memberstackDom) return;
     window.$memberstackDom.getCurrentMember().then(function(payload) {
@@ -809,6 +818,11 @@ function loadOldSiteScreenshot() {
             showLoggedInState(member);
             saveSiteToMember();
             forceToPanel9();
+            
+            // Send to Zapier directly - we have all the data right here
+    if (typeof window.sendToZapierDirect === 'function') {
+      window.sendToZapierDirect(email, name, phone, company);
+    }
           }).catch(function(error) {
             console.error('Signup error:', error);
             alert('Signup failed: ' + (error.message || 'Please try again'));
