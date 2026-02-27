@@ -564,10 +564,7 @@ function loadOldSiteScreenshot() {
 }
 
 // ZAPIER FUNCTION
-(function() {
-  var ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/6690142/u0ytuah/';
-
-  function gatherUserData() {
+ function gatherUserData() {
     var email = '';
     var name = '';
     var phone = '';
@@ -615,6 +612,14 @@ function loadOldSiteScreenshot() {
     var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl') || '';
     if (scannedUrl === 'skipped') scannedUrl = 'No existing website';
 
+    var templateUrl = '';
+    if (window.siteConfig && window.siteConfig.industry && window.siteConfig.industry.template5k) {
+      templateUrl = window.siteConfig.industry.template5k;
+    }
+    if (!templateUrl && window.cart && window.cart.image) {
+      templateUrl = window.cart.image;
+    }
+
     return {
       email: email,
       name: name,
@@ -624,6 +629,8 @@ function loadOldSiteScreenshot() {
       industry: industryName,
       tier: tier,
       price: price,
+      old_site_url: scannedUrl,
+      template_url: templateUrl,
       style: window.selectedStyle || '',
       signup_date: new Date().toISOString()
     };
