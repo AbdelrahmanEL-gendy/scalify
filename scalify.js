@@ -703,36 +703,36 @@ function loadOldSiteScreenshot() {
 })();
 
 // ==================== MEMBERSTACK AUTH HANDLER ====================
-(function() { 
+(function() {
   window.isLoggedInUser = false;
-  
+
   var checkMemberstack = setInterval(function() {
     if (window.$memberstackDom) {
       clearInterval(checkMemberstack);
       initMemberstackAuth();
     }
   }, 100);
-  
+
   function initMemberstackAuth() {
     var loadingScreen = document.getElementById('auth-loading');
-    
+
     window.$memberstackDom.getCurrentMember().then(function(result) {
       var member = result.data;
       if (member) {
         console.log('User already logged in:', member);
         window.isLoggedInUser = true;
-        
+
         var panel1 = document.getElementById('panel-1');
         if (panel1) panel1.style.display = 'none';
         var mockup = document.querySelector('.website-mockup');
         if (mockup) mockup.style.display = 'none';
-        
+
         if (loadingScreen) loadingScreen.style.display = 'flex';
-        
+
         showLoggedInState(member);
         loadSavedSite(member);
         forceToPanel9();
-        
+
         setTimeout(function() {
           if (loadingScreen) {
             loadingScreen.classList.add('hidden');
@@ -741,14 +741,14 @@ function loadOldSiteScreenshot() {
             }, 500);
           }
         }, 1500);
-        
+
       } else {
         console.log('New user - showing start screen');
       }
     }).catch(function(error) {
       console.log('Auth error - showing start screen');
     });
-    
+
     setTimeout(function() {
       var signupForm = document.querySelector('[data-ms-form="signup"]');
       if (signupForm) {
@@ -756,12 +756,12 @@ function loadOldSiteScreenshot() {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          
+
           var emailInput = signupForm.querySelector('input[type="email"], input[data-ms-member="email"]');
           var passwordInput = signupForm.querySelector('input[type="password"], input[data-ms-member="password"]');
           var nameInput = signupForm.querySelector('input[data-ms-member\\:custom-fields="name"]');
           var companyInput = signupForm.querySelector('input[data-ms-member\\:custom-fields="company-name"]');
-          
+
           if (!nameInput || !companyInput) {
             signupForm.querySelectorAll('input[type="text"]').forEach(function(input) {
               var placeholder = (input.placeholder || '').toLowerCase();
@@ -773,50 +773,49 @@ function loadOldSiteScreenshot() {
               }
             });
           }
-          
+
           var email = emailInput ? emailInput.value : '';
           var password = passwordInput ? passwordInput.value : '';
           var name = nameInput ? nameInput.value : '';
           var company = companyInput ? companyInput.value : '';
           var phone = document.getElementById('Phone') ? document.getElementById('Phone').value : '';
-          
+
           console.log('Signup data:', { email: email, name: name, company: company });
-          
+
           if (!email || !password) {
             alert('Please enter email and password');
             return false;
           }
-          
+
           var submitBtn = signupForm.querySelector('button[type="submit"]');
           var originalText = submitBtn ? submitBtn.textContent : '';
           if (submitBtn) {
             submitBtn.textContent = 'CREATING...';
             submitBtn.disabled = true;
           }
-          
+
           window.$memberstackDom.signupMemberEmailPassword({
             email: email,
             password: password,
-            customFields: { 
-  'name': name, 
-  'company-name': company, 
-  'phone': (document.getElementById('Phone') ? document.getElementById('Phone').value : '')
-}
+            customFields: {
+              'name': name,
+              'company-name': company,
+              'phone': (document.getElementById('Phone') ? document.getElementById('Phone').value : '')
+            }
           }).then(function(result) {
-    console.log('Signup successful:', result);
-    var member = result.data.member;
-    window.isLoggedInUser = true;
-    window._zapierSentDirect = true;  // ADD THIS
-    showLoggedInState(member);
-    saveSiteToMember();
-    
-    // Send to Zapier BEFORE hiding the form
-    if (typeof window.sendToZapierDirect === 'function') {
-      window.sendToZapierDirect(email, name, phone, company);
-    }
-    
-    forceToPanel9();
-}).catch(function(error) {
+            console.log('Signup successful:', result);
+            var member = result.data.member;
+            window.isLoggedInUser = true;
+            window._zapierSentDirect = true;
+            showLoggedInState(member);
+            saveSiteToMember();
+
+            if (typeof window.sendToZapierDirect === 'function') {
+              window.sendToZapierDirect(email, name, phone, company);
+            }
+
+            forceToPanel9();
+          }).catch(function(error) {
             console.error('Signup error:', error);
             alert('Signup failed: ' + (error.message || 'Please try again'));
             if (submitBtn) {
@@ -828,31 +827,31 @@ function loadOldSiteScreenshot() {
         }, true);
         console.log('Signup form handler attached');
       }
-      
+
       var loginForm = document.querySelector('[data-ms-form="login"]');
       if (loginForm) {
         loginForm.addEventListener('submit', function(e) {
           e.preventDefault();
           e.stopPropagation();
           e.stopImmediatePropagation();
-          
+
           var emailInput = loginForm.querySelector('input[type="email"], input[data-ms-member="email"]');
           var passwordInput = loginForm.querySelector('input[type="password"], input[data-ms-member="password"]');
           var email = emailInput ? emailInput.value : '';
           var password = passwordInput ? passwordInput.value : '';
-          
+
           if (!email || !password) {
             alert('Please enter email and password');
             return false;
           }
-          
+
           var submitBtn = loginForm.querySelector('button[type="submit"]');
           var originalText = submitBtn ? submitBtn.textContent : '';
           if (submitBtn) {
             submitBtn.textContent = 'LOGGING IN...';
             submitBtn.disabled = true;
           }
-          
+
           window.$memberstackDom.loginMemberEmailPassword({
             email: email,
             password: password
@@ -877,6 +876,7 @@ function loadOldSiteScreenshot() {
       }
     }, 1000);
   }
+})();
   
  function forceToPanel9() {
     console.log('=== FORCING TO PANEL ===');
