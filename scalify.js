@@ -612,28 +612,28 @@ function loadOldSiteScreenshot() {
     var scannedUrl = window.scannedUrl || localStorage.getItem('scalify_scannedUrl') || '';
     if (scannedUrl === 'skipped') scannedUrl = 'No existing website';
 
-    var templateUrl = '';
-    if (window.siteConfig && window.siteConfig.industry && window.siteConfig.industry.template5k) {
-      templateUrl = window.siteConfig.industry.template5k;
-    }
-    if (!templateUrl && window.cart && window.cart.image) {
-      templateUrl = window.cart.image;
-    }
+    var chosenTemplate = '';
+if (window.siteConfig && window.siteConfig.industry && window.siteConfig.industry.template5k) {
+  chosenTemplate = window.siteConfig.industry.template5k;
+}
+if (!chosenTemplate && window.cart && window.cart.image) {
+  chosenTemplate = window.cart.image;
+}
 
-    return {
-      email: email,
-      name: name,
-      phone: phone,
-      company_name: companyName,
-      business_name: businessName,
-      industry: industryName,
-      tier: tier,
-      price: price,
-      old_site_url: scannedUrl,
-      template_url: templateUrl,
-      style: window.selectedStyle || '',
-      signup_date: new Date().toISOString()
-    };
+return {
+  email: email,
+  name: name,
+  phone: phone,
+  company_name: companyName,
+  business_name: businessName,
+  industry: industryName,
+  tier: tier,
+  price: price,
+  old_site_url: scannedUrl,
+  template_url: chosenTemplate,
+  style: window.selectedStyle || '',
+  signup_date: new Date().toISOString()
+};
   }
 
   function sendToZapier(data) {
