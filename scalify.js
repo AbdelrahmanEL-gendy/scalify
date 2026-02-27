@@ -1373,61 +1373,49 @@ if (leadNumber) leadNumber.textContent = '$0';
   styleBold: card.getAttribute('data-style-bold')
 };
     
-    updateIndustryPreview();
+    
     var nextBtn = document.querySelector('#right-panel-4 .next-btn');
     if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
     if (typeof playBuildSound === 'function') playBuildSound();
     
-// AUTO-SWITCH TO NEW SITE TAB - SIMPLE
+// Pick random style FIRST (before preview updates)
+var styleCards = document.querySelectorAll('[data-style]');
+if (styleCards.length > 0) {
+  styleCards.forEach(function(c) { c.classList.remove('selected'); });
+  var randomIndex = Math.floor(Math.random() * styleCards.length);
+  var picked = styleCards[randomIndex];
+  picked.classList.add('selected');
+  var style = picked.getAttribute('data-style');
+  window.selectedStyle = style;
+  var styleMap = {
+    'corporate': 'styleCorporate',
+    'playful': 'stylePlayful',
+    'luxury': 'styleLuxury',
+    'minimal': 'styleMinimal',
+    'bold': 'styleBold'
+  };
+  var fieldName = styleMap[style];
+  var newUrl = window.siteConfig.industry[fieldName];
+  if (newUrl) {
+    window.siteConfig.industry.template5k = newUrl;
+    if (window.cart) window.cart.image = newUrl;
+    var orderImg = document.getElementById('order-image');
+    if (orderImg) orderImg.src = newUrl;
+    var slide5k = document.getElementById('slide-5k');
+    if (slide5k) {
+      var slideImg = slide5k.querySelector('img');
+      if (slideImg) slideImg.src = newUrl;
+    }
+  }
+}
+
+updateIndustryPreview();
+
+// AUTO-SWITCH TO NEW SITE TAB
 setTimeout(function() {
   var newSiteTab = document.getElementById('tabs-new-site');
   if (newSiteTab) newSiteTab.click();
 }, 400);
-
-// AUTO-SELECT RANDOM STYLE
-setTimeout(function() {
-  var styleCards = document.querySelectorAll('[data-style]');
-  if (styleCards.length > 0) {
-    styleCards.forEach(function(c) { c.classList.remove('selected'); });
-    
-    var randomIndex = Math.floor(Math.random() * styleCards.length);
-    var card = styleCards[randomIndex];
-    card.classList.add('selected');
-    
-    var style = card.getAttribute('data-style');
-    window.selectedStyle = style;
-    
-    var styleMap = {
-      'corporate': 'styleCorporate',
-      'playful': 'stylePlayful',
-      'luxury': 'styleLuxury',
-      'minimal': 'styleMinimal',
-      'bold': 'styleBold'
-    };
-    
-    var fieldName = styleMap[style];
-    var newTemplateUrl = window.siteConfig.industry[fieldName];
-    
-    if (newTemplateUrl) {
-      window.siteConfig.industry.template5k = newTemplateUrl;
-      
-      var previewImg = document.getElementById('template-5k');
-      if (previewImg) previewImg.src = newTemplateUrl;
-      
-      if (window.cart) window.cart.image = newTemplateUrl;
-      
-      var orderImg = document.getElementById('order-image');
-      if (orderImg) orderImg.src = newTemplateUrl;
-      
-      var slide5k = document.getElementById('slide-5k');
-      if (slide5k) {
-        var slideImg = slide5k.querySelector('img');
-        if (slideImg) slideImg.src = newTemplateUrl;
-      }
-    }
-  }
-}, 300);
-    
   });
   
   document.addEventListener('input', function(e) {
