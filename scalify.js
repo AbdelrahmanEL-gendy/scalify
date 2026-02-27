@@ -471,6 +471,15 @@ function updateIndustryPreview() {
   }
 }
 
+// Auto-select a random style
+setTimeout(function() {
+  var styleCards = document.querySelectorAll('[data-style]');
+  if (styleCards.length > 0) {
+    var randomIndex = Math.floor(Math.random() * styleCards.length);
+    styleCards[randomIndex].click();
+  }
+}, 200);
+
 // Restore industry on page load for logged-in users only
 function restoreIndustrySelection() {
   if (!window.$memberstackDom) return;
@@ -1436,6 +1445,28 @@ setTimeout(function() {
         console.log('Setting src to:', newTemplateUrl);
         if (previewImg) previewImg.src = newTemplateUrl;
 
+        if (newTemplateUrl) {
+  window.siteConfig.industry.template5k = newTemplateUrl;
+  
+  var previewImg = document.getElementById('template-5k');
+  if (previewImg) previewImg.src = newTemplateUrl;
+
+  // Update cart image
+  if (window.cart) {
+    window.cart.image = newTemplateUrl;
+  }
+
+  // Update order summary image
+  var orderImg = document.getElementById('order-image');
+  if (orderImg) orderImg.src = newTemplateUrl;
+
+  // Update slide image if it exists
+  var slide5k = document.getElementById('slide-5k');
+  if (slide5k) {
+    var slideImg = slide5k.querySelector('img');
+    if (slideImg) slideImg.src = newTemplateUrl;
+  }
+}
         setTimeout(function() {
           console.log('Image src after 500ms:', document.getElementById('template-5k').src);
         }, 500);
