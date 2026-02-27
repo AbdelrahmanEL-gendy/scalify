@@ -624,8 +624,6 @@ function loadOldSiteScreenshot() {
       industry: industryName,
       tier: tier,
       price: price,
-      old_site_url: scannedUrl,
-      template_url: templateUrl,
       style: window.selectedStyle || '',
       signup_date: new Date().toISOString()
     };
