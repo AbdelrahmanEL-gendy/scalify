@@ -876,7 +876,6 @@ function loadOldSiteScreenshot() {
       }
     }, 1000);
   }
-})();
   
  function forceToPanel9() {
     console.log('=== FORCING TO PANEL ===');
