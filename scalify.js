@@ -516,35 +516,6 @@ if (document.readyState === 'loading') {
 } else {
   restoreIndustrySelection();
 }
-function updateStylePreview() {
-  var style = window.siteConfig.style;
-  if (!style) return;
-  var fonts = {
-    'font-modern': "Inter, sans-serif",
-    'font-classic': "Playfair Display, serif",
-    'font-friendly': "Nunito, sans-serif",
-    'font-bold': "Poppins, sans-serif",
-    'font-playful': "Quicksand, sans-serif"
-  };
-  var fontFamily = fonts[style.fontClass];
-  if (!fontFamily) return;
-  var headline = document.getElementById('preview-headline');
-  var description = document.getElementById('preview-description');
-  var cta = document.getElementById('preview-cta');
-  var navCta = document.getElementById('preview-nav-cta');
-  var image = document.getElementById('preview-image');
-  if (headline) headline.style.setProperty('font-family', fontFamily, 'important');
-  if (description) description.style.setProperty('font-family', fontFamily, 'important');
-  if (cta) {
-    cta.style.setProperty('font-family', fontFamily, 'important');
-    if (style.buttonRadius) cta.style.setProperty('border-radius', style.buttonRadius, 'important');
-  }
-  if (navCta) {
-    navCta.style.setProperty('font-family', fontFamily, 'important');
-    if (style.buttonRadius) navCta.style.setProperty('border-radius', style.buttonRadius, 'important');
-  }
-  if (image && style.radius) image.style.setProperty('border-radius', style.radius, 'important');
-}
 
 function updateColorPreview() {
   var colors = window.siteConfig.colors;
@@ -1430,9 +1401,10 @@ setTimeout(function() {
 })();
   
   // STYLE SELECTION
-  (function() {
-  window.selectedStyle = null;
 
+  // STYLE SELECTION - DEBUG
+(function() {
+  window.selectedStyle = null;
   var styleMap = {
     'corporate': 'styleCorporate',
     'playful': 'stylePlayful',
@@ -1440,35 +1412,35 @@ setTimeout(function() {
     'minimal': 'styleMinimal',
     'bold': 'styleBold'
   };
-
   document.addEventListener('click', function(e) {
     var card = e.target.closest('[data-style]');
     if (!card) return;
-
     var style = card.getAttribute('data-style');
     window.selectedStyle = style;
+    console.log('Style clicked:', style);
 
-    // Update selected state on cards
     document.querySelectorAll('[data-style]').forEach(function(c) {
       c.classList.remove('selected');
     });
     card.classList.add('selected');
 
-    // Swap the template-5k image to the selected style
     if (window.siteConfig && window.siteConfig.industry) {
       var fieldName = styleMap[style];
       var newTemplateUrl = window.siteConfig.industry[fieldName];
+      console.log('Field:', fieldName, 'URL:', newTemplateUrl);
 
       if (newTemplateUrl) {
-        // Update the stored template5k
         window.siteConfig.industry.template5k = newTemplateUrl;
-
-        // Update the preview image (adjust selector to match yours)
         var previewImg = document.getElementById('template-5k');
+        console.log('Image element:', previewImg);
+        console.log('Setting src to:', newTemplateUrl);
         if (previewImg) previewImg.src = newTemplateUrl;
+
+        setTimeout(function() {
+          console.log('Image src after 500ms:', document.getElementById('template-5k').src);
+        }, 500);
       }
     }
-
     if (typeof playBuildSound === 'function') playBuildSound();
   });
 })();
