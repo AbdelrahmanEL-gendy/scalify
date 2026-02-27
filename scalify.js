@@ -1378,11 +1378,55 @@ if (leadNumber) leadNumber.textContent = '$0';
     if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
     if (typeof playBuildSound === 'function') playBuildSound();
     
-   // AUTO-SWITCH TO NEW SITE TAB - SIMPLE
+// AUTO-SWITCH TO NEW SITE TAB - SIMPLE
 setTimeout(function() {
   var newSiteTab = document.getElementById('tabs-new-site');
   if (newSiteTab) newSiteTab.click();
 }, 400);
+
+// AUTO-SELECT RANDOM STYLE
+setTimeout(function() {
+  var styleCards = document.querySelectorAll('[data-style]');
+  if (styleCards.length > 0) {
+    styleCards.forEach(function(c) { c.classList.remove('selected'); });
+    
+    var randomIndex = Math.floor(Math.random() * styleCards.length);
+    var card = styleCards[randomIndex];
+    card.classList.add('selected');
+    
+    var style = card.getAttribute('data-style');
+    window.selectedStyle = style;
+    
+    var styleMap = {
+      'corporate': 'styleCorporate',
+      'playful': 'stylePlayful',
+      'luxury': 'styleLuxury',
+      'minimal': 'styleMinimal',
+      'bold': 'styleBold'
+    };
+    
+    var fieldName = styleMap[style];
+    var newTemplateUrl = window.siteConfig.industry[fieldName];
+    
+    if (newTemplateUrl) {
+      window.siteConfig.industry.template5k = newTemplateUrl;
+      
+      var previewImg = document.getElementById('template-5k');
+      if (previewImg) previewImg.src = newTemplateUrl;
+      
+      if (window.cart) window.cart.image = newTemplateUrl;
+      
+      var orderImg = document.getElementById('order-image');
+      if (orderImg) orderImg.src = newTemplateUrl;
+      
+      var slide5k = document.getElementById('slide-5k');
+      if (slide5k) {
+        var slideImg = slide5k.querySelector('img');
+        if (slideImg) slideImg.src = newTemplateUrl;
+      }
+    }
+  }
+}, 300);
     
   });
   
@@ -1409,9 +1453,7 @@ setTimeout(function() {
   
 })();
   
-  // STYLE SELECTION
-
-  // STYLE SELECTION - DEBUG
+// STYLE SELECTION
 (function() {
   window.selectedStyle = null;
   var styleMap = {
@@ -1426,7 +1468,6 @@ setTimeout(function() {
     if (!card) return;
     var style = card.getAttribute('data-style');
     window.selectedStyle = style;
-    console.log('Style clicked:', style);
 
     document.querySelectorAll('[data-style]').forEach(function(c) {
       c.classList.remove('selected');
@@ -1436,40 +1477,22 @@ setTimeout(function() {
     if (window.siteConfig && window.siteConfig.industry) {
       var fieldName = styleMap[style];
       var newTemplateUrl = window.siteConfig.industry[fieldName];
-      console.log('Field:', fieldName, 'URL:', newTemplateUrl);
-
       if (newTemplateUrl) {
         window.siteConfig.industry.template5k = newTemplateUrl;
+        
         var previewImg = document.getElementById('template-5k');
-        console.log('Image element:', previewImg);
-        console.log('Setting src to:', newTemplateUrl);
         if (previewImg) previewImg.src = newTemplateUrl;
 
-        if (newTemplateUrl) {
-  window.siteConfig.industry.template5k = newTemplateUrl;
-  
-  var previewImg = document.getElementById('template-5k');
-  if (previewImg) previewImg.src = newTemplateUrl;
+        if (window.cart) window.cart.image = newTemplateUrl;
 
-  // Update cart image
-  if (window.cart) {
-    window.cart.image = newTemplateUrl;
-  }
+        var orderImg = document.getElementById('order-image');
+        if (orderImg) orderImg.src = newTemplateUrl;
 
-  // Update order summary image
-  var orderImg = document.getElementById('order-image');
-  if (orderImg) orderImg.src = newTemplateUrl;
-
-  // Update slide image if it exists
-  var slide5k = document.getElementById('slide-5k');
-  if (slide5k) {
-    var slideImg = slide5k.querySelector('img');
-    if (slideImg) slideImg.src = newTemplateUrl;
-  }
-}
-        setTimeout(function() {
-          console.log('Image src after 500ms:', document.getElementById('template-5k').src);
-        }, 500);
+        var slide5k = document.getElementById('slide-5k');
+        if (slide5k) {
+          var slideImg = slide5k.querySelector('img');
+          if (slideImg) slideImg.src = newTemplateUrl;
+        }
       }
     }
     if (typeof playBuildSound === 'function') playBuildSound();
