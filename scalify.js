@@ -1378,67 +1378,52 @@ if (leadNumber) leadNumber.textContent = '$0';
     if (nextBtn) nextBtn.setAttribute('data-disabled', 'false');
     if (typeof playBuildSound === 'function') playBuildSound();
     
-// Pick random style FIRST (before preview updates)
-var styleCards = document.querySelectorAll('[data-style]');
-if (styleCards.length > 0) {
-  styleCards.forEach(function(c) { c.classList.remove('selected'); });
-  var randomIndex = Math.floor(Math.random() * styleCards.length);
-  var picked = styleCards[randomIndex];
-  picked.classList.add('selected');
-  var style = picked.getAttribute('data-style');
-  window.selectedStyle = style;
-  var styleMap = {
-    'corporate': 'styleCorporate',
-    'playful': 'stylePlayful',
-    'luxury': 'styleLuxury',
-    'minimal': 'styleMinimal',
-    'bold': 'styleBold'
-  };
-  var fieldName = styleMap[style];
-  var newUrl = window.siteConfig.industry[fieldName];
-  if (newUrl) {
-    window.siteConfig.industry.template5k = newUrl;
-    if (window.cart) window.cart.image = newUrl;
-    var orderImg = document.getElementById('order-image');
-    if (orderImg) orderImg.src = newUrl;
-    var slide5k = document.getElementById('slide-5k');
-    if (slide5k) {
-      var slideImg = slide5k.querySelector('img');
-      if (slideImg) slideImg.src = newUrl;
+updateIndustryPreview();
+
+// Random style AFTER preview updates so it overwrites
+setTimeout(function() {
+  var styleCards = document.querySelectorAll('[data-style]');
+  if (styleCards.length > 0) {
+    styleCards.forEach(function(c) { c.classList.remove('selected'); });
+    var randomIndex = Math.floor(Math.random() * styleCards.length);
+    var picked = styleCards[randomIndex];
+    picked.classList.add('selected');
+    var style = picked.getAttribute('data-style');
+    window.selectedStyle = style;
+    var styleMap = {
+      'corporate': 'styleCorporate',
+      'playful': 'stylePlayful',
+      'luxury': 'styleLuxury',
+      'minimal': 'styleMinimal',
+      'bold': 'styleBold'
+    };
+    var fieldName = styleMap[style];
+    var newUrl = window.siteConfig.industry[fieldName];
+    if (newUrl) {
+      window.siteConfig.industry.template5k = newUrl;
+      
+      var previewImg = document.getElementById('template-5k');
+      if (previewImg) previewImg.src = newUrl;
+      
+      if (window.cart) window.cart.image = newUrl;
+      
+      var orderImg = document.getElementById('order-image');
+      if (orderImg) orderImg.src = newUrl;
+      
+      var slide5k = document.getElementById('slide-5k');
+      if (slide5k) {
+        var slideImg = slide5k.querySelector('img');
+        if (slideImg) slideImg.src = newUrl;
+      }
     }
   }
-}
-
-updateIndustryPreview();
+}, 100);
 
 // AUTO-SWITCH TO NEW SITE TAB
 setTimeout(function() {
   var newSiteTab = document.getElementById('tabs-new-site');
   if (newSiteTab) newSiteTab.click();
 }, 400);
-  });
-  
-  document.addEventListener('input', function(e) {
-    if (e.target.matches('[data-jet-filter] input, .jetboost-search input, input[type="search"]')) {
-      setTimeout(syncIndustrySelection, 100);
-    }
-  });
-  
-  var container = document.querySelector('.industry-grid') || 
-                  document.querySelector('[data-jet-filter-list]') || 
-                  document.querySelector('.industry-cards-wrapper');
-  
-  if (container) {
-    new MutationObserver(function(mutations) {
-      syncIndustrySelection();
-    }).observe(container, {
-      childList: true,
-      subtree: true,
-      attributes: true,
-      attributeFilter: ['style', 'class']
-    });
-  }
-  
 })();
   
 // STYLE SELECTION
