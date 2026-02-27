@@ -564,7 +564,10 @@ function loadOldSiteScreenshot() {
 }
 
 // ZAPIER FUNCTION
- function gatherUserData() {
+(function() {
+  var ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/6690142/u0ytuah/';
+
+  function gatherUserData() {
     var email = '';
     var name = '';
     var phone = '';
@@ -613,27 +616,27 @@ function loadOldSiteScreenshot() {
     if (scannedUrl === 'skipped') scannedUrl = 'No existing website';
 
     var chosenTemplate = '';
-if (window.siteConfig && window.siteConfig.industry && window.siteConfig.industry.template5k) {
-  chosenTemplate = window.siteConfig.industry.template5k;
-}
-if (!chosenTemplate && window.cart && window.cart.image) {
-  chosenTemplate = window.cart.image;
-}
+    if (window.siteConfig && window.siteConfig.industry && window.siteConfig.industry.template5k) {
+      chosenTemplate = window.siteConfig.industry.template5k;
+    }
+    if (!chosenTemplate && window.cart && window.cart.image) {
+      chosenTemplate = window.cart.image;
+    }
 
-return {
-  email: email,
-  name: name,
-  phone: phone,
-  company_name: companyName,
-  business_name: businessName,
-  industry: industryName,
-  tier: tier,
-  price: price,
-  old_site_url: scannedUrl,
-  template_url: chosenTemplate,
-  style: window.selectedStyle || '',
-  signup_date: new Date().toISOString()
-};
+    return {
+      email: email,
+      name: name,
+      phone: phone,
+      company_name: companyName,
+      business_name: businessName,
+      industry: industryName,
+      tier: tier,
+      price: price,
+      old_site_url: scannedUrl,
+      template_url: chosenTemplate,
+      style: window.selectedStyle || '',
+      signup_date: new Date().toISOString()
+    };
   }
 
   function sendToZapier(data) {
@@ -644,7 +647,7 @@ return {
     sendToZapier(gatherUserData());
   };
 
-   window.sendToZapierDirect = function(email, name, phone, company) {
+  window.sendToZapierDirect = function(email, name, phone, company) {
     var data = gatherUserData();
     data.email = email || data.email;
     data.name = name || data.name;
@@ -676,7 +679,7 @@ return {
   }
 
   document.addEventListener('memberstack:authenticated', function() {
-    if (window._zapierSentDirect) return; 
+    if (window._zapierSentDirect) return;
     setTimeout(handleMemberstackData, 2000);
   });
 
