@@ -1407,7 +1407,10 @@ if (leadNumber) leadNumber.textContent = '$0';
           var orderImg = document.getElementById('order-image');
           if (orderImg) orderImg.src = newUrl;
           
+          var cartImg = document.getElementById('cart-image');
+          if (cartImg) cartImg.src = newUrl;
           var slide5k = document.getElementById('slide-5k');
+          
           if (slide5k) {
             var slideImg = slide5k.querySelector('img');
             if (slideImg) slideImg.src = newUrl;
@@ -1482,7 +1485,10 @@ if (leadNumber) leadNumber.textContent = '$0';
         var orderImg = document.getElementById('order-image');
         if (orderImg) orderImg.src = newTemplateUrl;
 
+        var cartImg = document.getElementById('cart-image');
+        if (cartImg) cartImg.src = newTemplateUrl;
         var slide5k = document.getElementById('slide-5k');
+        
         if (slide5k) {
           var slideImg = slide5k.querySelector('img');
           if (slideImg) slideImg.src = newTemplateUrl;
