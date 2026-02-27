@@ -1493,52 +1493,6 @@ if (leadNumber) leadNumber.textContent = '$0';
   });
 })();
   
-// STYLE SELECTION
-(function() {
-  window.selectedStyle = null;
-  var styleMap = {
-    'corporate': 'styleCorporate',
-    'playful': 'stylePlayful',
-    'luxury': 'styleLuxury',
-    'minimal': 'styleMinimal',
-    'bold': 'styleBold'
-  };
-  document.addEventListener('click', function(e) {
-    var card = e.target.closest('[data-style]');
-    if (!card) return;
-    var style = card.getAttribute('data-style');
-    window.selectedStyle = style;
-
-    document.querySelectorAll('[data-style]').forEach(function(c) {
-      c.classList.remove('selected');
-    });
-    card.classList.add('selected');
-
-    if (window.siteConfig && window.siteConfig.industry) {
-      var fieldName = styleMap[style];
-      var newTemplateUrl = window.siteConfig.industry[fieldName];
-      if (newTemplateUrl) {
-        window.siteConfig.industry.template5k = newTemplateUrl;
-        
-        var previewImg = document.getElementById('template-5k');
-        if (previewImg) previewImg.src = newTemplateUrl;
-
-        if (window.cart) window.cart.image = newTemplateUrl;
-
-        var orderImg = document.getElementById('order-image');
-        if (orderImg) orderImg.src = newTemplateUrl;
-
-        var slide5k = document.getElementById('slide-5k');
-        if (slide5k) {
-          var slideImg = slide5k.querySelector('img');
-          if (slideImg) slideImg.src = newTemplateUrl;
-        }
-      }
-    }
-    if (typeof playBuildSound === 'function') playBuildSound();
-  });
-})();
-  
   // COLOR SELECTION
   document.querySelectorAll('.color-card').forEach(function(card) {
     card.addEventListener('click', function() {
@@ -1615,7 +1569,7 @@ if (leadNumber) leadNumber.textContent = '$0';
     });
   });
 
-  // =========================
+// =========================
 // DOMAIN & LOGO UPSELLS
 // =========================
 
@@ -1623,13 +1577,10 @@ window.userSkippedUrl = false;
 window.originalUrlText = null;
 
 function initUpsellClicks() {
-
   return;
-  // ----- DOMAIN UPSELL (all slides) -----
   var allUrls = document.querySelectorAll('.new-site-url');
   
   allUrls.forEach(function(urlEl) {
-    // Store original text once
     if (!window.originalUrlText) {
       window.originalUrlText = urlEl.textContent;
     }
@@ -1640,14 +1591,12 @@ function initUpsellClicks() {
       var domainUpsell = document.getElementById('upsell-domain');
       var isAdding = !urlEl.classList.contains('added');
       
-      // Toggle cart upsell
       if (isAdding) {
         if (domainUpsell && !domainUpsell.classList.contains('active')) domainUpsell.click();
       } else {
         if (domainUpsell && domainUpsell.classList.contains('active')) domainUpsell.click();
       }
       
-      // Update ALL url elements across all slides
       allUrls.forEach(function(u) {
         if (isAdding) {
           u.classList.add('added');
@@ -1662,7 +1611,6 @@ function initUpsellClicks() {
     });
   });
   
-  // ----- LOGO UPSELL (all slides) -----
   var allLogos = document.querySelectorAll('.logo-upsell-anchor');
   
   allLogos.forEach(function(logoEl) {
@@ -1670,14 +1618,12 @@ function initUpsellClicks() {
       var brandUpsell = document.getElementById('upsell-brand');
       var isAdding = !logoEl.classList.contains('added');
       
-      // Toggle cart upsell
       if (isAdding) {
         if (brandUpsell && !brandUpsell.classList.contains('active')) brandUpsell.click();
       } else {
         if (brandUpsell && brandUpsell.classList.contains('active')) brandUpsell.click();
       }
       
-      // Update ALL logo elements across all slides
       allLogos.forEach(function(l) {
         if (isAdding) {
           l.classList.add('added');
@@ -1701,12 +1647,10 @@ function syncUpsellStates() {
   var allUrls = document.querySelectorAll('.new-site-url');
   var allLogos = document.querySelectorAll('.logo-upsell-anchor');
   
-  // Store original URL if not already stored
   if (!window.originalUrlText && allUrls.length > 0) {
     window.originalUrlText = allUrls[0].textContent;
   }
   
-  // Sync domain across all slides
   allUrls.forEach(function(urlEl) {
     if (urlEl.classList.contains('upsell-disabled')) return;
     
@@ -1719,7 +1663,6 @@ function syncUpsellStates() {
     }
   });
   
-  // Sync logo across all slides
   allLogos.forEach(function(logoEl) {
     if (brandUpsell && brandUpsell.classList.contains('active') && !logoEl.classList.contains('added')) {
       logoEl.classList.add('added');
@@ -1728,10 +1671,6 @@ function syncUpsellStates() {
     }
   });
 }
-
-// =========================
-// CONDITIONAL DOMAIN
-// =========================
 
 // =========================
 // CONDITIONAL DOMAIN - EVENT DRIVEN
@@ -1750,11 +1689,9 @@ function initConditionalDomainUpsell() {
     });
   }
   
-  check(); // Run once on init
-  // REMOVED: setInterval(check, 300);
+  check();
 }
 
-// Expose check function so you can call it when needed
 window.updateDomainUpsell = function() {
   var allUrls = document.querySelectorAll('.new-site-url');
   allUrls.forEach(function(urlEl) {
@@ -1768,5 +1705,4 @@ window.updateDomainUpsell = function() {
 
 initUpsellClicks();
 initConditionalDomainUpsell();
-// REMOVED: setInterval(syncUpsellStates, 300);
 });
